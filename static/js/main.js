@@ -6,13 +6,15 @@ import TileLayer from 'https://cdn.skypack.dev/ol/layer/Tile';
 import ImageWMS from 'https://cdn.skypack.dev/ol/source/ImageWMS.js';
 import OSM from 'https://cdn.skypack.dev/ol/source/OSM';
 
+console.log("Layer:", appData.layer);
+console.log("URLS:", appData.url);
 
-const wmsSource = new ImageWMS({
-  url: 'https://ahocevar.com/geoserver/wms',
-  params: {'LAYERS': 'topp:states'},
-  ratio: 1,
-  serverType: 'geoserver',
-});
+    const wmsSource = new ImageWMS({
+      url: appData.url,
+      params: {'LAYERS': appData.layer},
+      ratio: 1,
+      serverType: 'geoserver',
+    });
 
 const updateLegend = function (resolution) {
   const graphicUrl = wmsSource.getLegendUrl(resolution);

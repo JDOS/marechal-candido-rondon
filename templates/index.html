@@ -6,19 +6,36 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css" />
     
 </head>
+    <style>
+      .map {
+        width: 100%;
+        height: 400px;
+      }
+    </style>
 <body>
-    <h1>Bem-vindo ao Geo MCR!</h1>
-    {% for layer in layers %}
-    	<p>{{layer.name}}</p>
-    {% endfor %}
-    <p></p>
-    }
+ <h1>Bem-vindo ao Geo MCR!</h1>
 
     <div id="map" class="map"></div>
     Legend:
     <div><img id="legend"/></div>
 
+    <script>
+      const appData = {
+        url: "{{ url }}",
+        layer: "{{ layers[25].name }}",
+
+      };
+    </script>
+
     <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+
+    {% for layer in layers %}
+        <p>{{layer.name}}</p>
+    {% endfor %}
+    }
+
+
   </body>
 </body>
 </html>

@@ -12,6 +12,8 @@ password = os.getenv("password")
 
 
 geoserver_url = "https://sistemas.itti.org.br/geoserver/rest/layers"
+geoserver_wms="https://geoserver.reservashidricasiguacu.com.br/geoserver/Sanepar/wms?"
+
 
 
 params = {
@@ -37,7 +39,7 @@ app = Flask(__name__)
 # Rota principal
 @app.route('/')
 def home():
-    return render_template("index.html",layers=layers)
+    return render_template("index.html",layers=layers,url=geoserver_wms)
 
 # Outra rota
 @app.route('/sobre')
