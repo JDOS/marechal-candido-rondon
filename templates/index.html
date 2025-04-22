@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>GEO - MCR</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css" />
+    
+</head>
+<body>
+    <h1>Bem-vindo ao Geo MCR!</h1>
+    {% for layer in layers %}
+    	<p>{{layer.name}}</p>
+    {% endfor %}
+    <p></p>
+    }
+
+    <div id="map" class="map"></div>
+    Legend:
+    <div><img id="legend"/></div>
+
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</body>
+</html>
