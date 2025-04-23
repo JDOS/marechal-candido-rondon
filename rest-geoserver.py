@@ -12,7 +12,7 @@ password = os.getenv("password")
 
 
 geoserver_url = "https://sistemas.itti.org.br/geoserver/rest/layers"
-geoserver_wms="https://geoserver.reservashidricasiguacu.com.br/geoserver/Sanepar/wms?"
+geoserver_wms="https://sistemas.itti.org.br/geoserver/Sanepar/wms"
 
 
 

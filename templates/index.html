@@ -22,7 +22,7 @@
     <script>
       const appData = {
         url: "{{ url }}",
-        layer: "{{ layers[25].name }}",
+        layer: "{{ layers[46].name }}",
 
       };
     </script>
@@ -31,7 +31,7 @@
 
 
     {% for layer in layers %}
-        <p>{{layer.name}}</p>
+        <p>{{ loop.index }}-{{layer.name}}</p>
     {% endfor %}
     }
 
