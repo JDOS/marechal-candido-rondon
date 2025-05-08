@@ -2,7 +2,7 @@
 import Map from 'https://cdn.skypack.dev/ol/Map';
 import View from 'https://cdn.skypack.dev/ol/View';
 import ImageLayer from 'https://cdn.skypack.dev/ol/layer/Image.js';
-import TileLayer from 'https://cdn.skypack.dev/ol/layer/Tile';
+import TileLayer from 'https://cdn.skypack.dev/ol/layer/Tile.js';
 import ImageWMS from 'https://cdn.skypack.dev/ol/source/ImageWMS.js';
 import OSM from 'https://cdn.skypack.dev/ol/source/OSM';
 import TileWMS from 'https://cdn.skypack.dev/ol/source/TileWMS.js';
@@ -15,8 +15,9 @@ console.log("URLS:", appData.url);
       url: appData.url,
     //  params: {'LAYERS': "Sanepar:Coberturas vegetais"},
       params: {'LAYERS': appData.layer, 'TILED': true},
-      ratio: 1,
+
       serverType: 'geoserver',
+     
     });
 
  const layer1 =  new TileLayer({
@@ -26,9 +27,10 @@ console.log("URLS:", appData.url);
       serverType: 'geoserver',
       // Countries have transparency, so do not fade tiles:
       transition: 0,
+      crossOrigin: 'anonymous',
     }),
   })
-
+  console.log(layer1);
 
 const updateLegend = function (resolution) {
   const graphicUrl = wmsSource.getLegendUrl(resolution);
@@ -47,13 +49,15 @@ const layers = [
   layer1,
 ];
 
+const view = new View({
+  center: [-5482713, -2930080],
+  zoom: 10,
+});
+
 const map = new Map({
   layers: layers,
   target: 'map',
-  view: new View({
-    center: [-5482713, -2930080],
-    zoom: 10,
-  }),
+  view: view,
 });
 
 // Initial legend
@@ -64,4 +68,32 @@ updateLegend(resolution);
 map.getView().on('change:resolution', function (event) {
   const resolution = event.target.getResolution();
   updateLegend(resolution);
+});
+
+map.on('singleclick', function (evt) {
+  document.getElementById('info').innerHTML = '';
+  const viewResolution = view.getResolution();
+  const url = layer1.getSource().getFeatureInfoUrl(
+    evt.coordinate,
+    viewResolution,
+    'EPSG:3857',
+    {'INFO_FORMAT': 'text/html'},
+   // {'INFO_FORMAT': 'application/json'}
+  );
+  if (url) {
+    fetch(url)
+      .then((response) => response.text())
+      .then((html) => {
+        document.getElementById('info').innerHTML = html;
+      });
+  }
+});
+
+map.on('pointermove', function (evt) {
+  if (evt.dragging) {
+    return;
+  }
+  const data = layer1.getData(evt.pixel);
+  const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+  map.getTargetElement().style.cursor = hit ? 'pointer' : '';
 });
