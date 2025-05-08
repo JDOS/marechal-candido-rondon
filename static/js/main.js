@@ -20,7 +20,7 @@ console.log("URLS:", appData.url);
      
     });
 
- const layer1 =  new TileLayer({
+ let layer1 =  new TileLayer({
     source: new TileWMS({
       url: appData.url,
       params: {'LAYERS': appData.layer, 'TILED': true},
@@ -30,6 +30,16 @@ console.log("URLS:", appData.url);
       crossOrigin: 'anonymous',
     }),
   })
+
+  document.getElementById('layersSelect').addEventListener('change', function () {
+    const novaLayer = this.value;
+    atualizarLayer(novaLayer);
+  });
+
+  function atualizarLayer(novoLayer){
+    appData.layer = novoLayer;
+    layer1.getSource().updateParams({ 'LAYERS': novoLayer });
+  }
 
 const updateLegend = function (resolution) {
   const graphicUrl = wmsSource.getLegendUrl(resolution);

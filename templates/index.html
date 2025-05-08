@@ -4,6 +4,7 @@
 
     <title>GEO - MCR</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css" />
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
     
 </head>
     <style>
@@ -29,13 +30,14 @@
       };
     </script>
 
-    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+ 
 
 
-    {% for layer in layers %}
-        <p>{{ loop.index }}-{{layer.name}}</p>
-    {% endfor %}
-    }
+    <select id="layersSelect">
+      {% for layer in layers %}
+      <option value="{{layer.name}}">{{ loop.index }} - {{layer.name}}</option>
+      {% endfor %}
+    </select>
 
 
   </body>
