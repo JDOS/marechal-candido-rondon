@@ -30,7 +30,6 @@ console.log("URLS:", appData.url);
       crossOrigin: 'anonymous',
     }),
   })
-  console.log(layer1);
 
 const updateLegend = function (resolution) {
   const graphicUrl = wmsSource.getLegendUrl(resolution);
@@ -77,17 +76,50 @@ map.on('singleclick', function (evt) {
     evt.coordinate,
     viewResolution,
     'EPSG:3857',
-    {'INFO_FORMAT': 'text/html'},
-   // {'INFO_FORMAT': 'application/json'}
+  //  {'INFO_FORMAT': 'text/html'},
+    {'INFO_FORMAT': 'application/json'}
   );
+
   if (url) {
     fetch(url)
-      .then((response) => response.text())
-      .then((html) => {
-        document.getElementById('info').innerHTML = html;
+      .then((response) => response.json()) // Parse as JSON
+      .then((json) => {
+        // Extract properties from each feature in the JSON response
+        if (json && json.features) {
+          const properties = json.features.map(feature => feature.properties); // Extract properties
+          console.log(JSON.stringify(properties, null, 2));
+          let itens = properties;
+          let htmlContent =''
+
+          itens.forEach(item => {
+            for (let key in item) {
+              console.log(`${key}: ${item[key]}`);
+              htmlContent+='<li>'+ `${key}: ${item[key]}`+'</li>';
+            }
+          });
+          
+          // Display properties
+          //document.getElementById('info').innerHTML = JSON.stringify(properties, null, 2); // Pretty print the properties
+          document.getElementById('info').innerHTML = htmlContent;
+        } else {
+          document.getElementById('info').innerHTML = 'No features found.';
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching feature info:', error);
+        document.getElementById('info').innerHTML = 'Error fetching feature info.';
       });
   }
+  // if (url) {
+  //   fetch(url)
+  //     .then((response) => response.text())
+  //     .then((html) => {
+  //       document.getElementById('info').innerHTML = html;
+  //     });
+  // }
 });
+
+
 
 map.on('pointermove', function (evt) {
   if (evt.dragging) {
