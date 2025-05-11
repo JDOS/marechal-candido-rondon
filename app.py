@@ -41,9 +41,13 @@ app = Flask(__name__)
 def home():
     return render_template("index.html",layers=layers,url=geoserver_wms)
 
-@app.route('/sobre')
+@app.route('/esri')
 def esri():
     return render_template("esri-map.html")
+
+@app.route('/geoserver')
+def geoserver():
+    return render_template("esri-geoserver.html")
 
 # Outra rota
 @app.route('/sobre')

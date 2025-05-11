@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>GeoServer WMS no ArcGIS JS API</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.29/"></script>
+  <style>
+    html, body, #viewDiv {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="viewDiv"></div>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/WMSLayer"
+    ], function(Map, MapView, WMSLayer) {
+
+      // 🔗 URL WMS do GeoServer
+      const wmsLayer = new WMSLayer({
+        url: "https://sistemas.itti.org.br/geoserver/Sanepar/wms",
+        sublayers: [{
+          name: "Sanepar:Curva de nivel"
+        }],
+        title: "Estados dos EUA (WMS via GeoServer)"
+      });
+
+      const map = new Map({
+        basemap: "topo-vector",
+        layers: [wmsLayer]
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-100, 40],
+        zoom: 4
+      });
+
+              view.on("click", async (event) => {
+        const screenPoint = view.toScreen(event.mapPoint);
+        const mapExtent = view.extent;
+
+        const width = view.width;
+        const height = view.height;
+
+        const bbox = `${mapExtent.xmin},${mapExtent.ymin},${mapExtent.xmax},${mapExtent.ymax}`;
+
+        const url = `https://sistemas.itti.org.br/geoserver/Sanepar/wms?service=WMS&version=1.1.1&request=GetFeatureInfo` +
+          `&layers=Sanepar:Curva de nivel&query_layers=topp:states&bbox=${bbox}` +
+          `&width=${width}&height=${height}&srs=EPSG:4326&info_format=application/json` +
+          `&x=${Math.floor(screenPoint.x)}&y=${Math.floor(screenPoint.y)}&feature_count=5`;
+
+        try {
+          const response = await fetch(url);
+          const json = await response.json();
+          document.getElementById("infoBox").innerText = JSON.stringify(json.features[0].properties, null, 2);
+        } catch (e) {
+          document.getElementById("infoBox").innerText = "Erro ao buscar info.";
+          console.error(e);
+        }
+      });
+    });
+
+
+
+  </script>
+</body>
+</html>
