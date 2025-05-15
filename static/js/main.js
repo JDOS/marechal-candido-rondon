@@ -105,8 +105,11 @@ map.getView().on('change:resolution', function (event) {
 
 map.on('singleclick', function (evt) {
   document.getElementById('info').innerHTML = '';
+  //add coords in console
   const coord3857 = evt.coordinate;
   console.log("coordenadas",coord3857);
+
+
   const viewResolution = view.getResolution();
   const url = layer1.getSource().getFeatureInfoUrl(
     evt.coordinate,
@@ -126,13 +129,14 @@ map.on('singleclick', function (evt) {
           console.log(JSON.stringify(properties, null, 2));
           let itens = properties;
           let htmlContent =''
-
+          htmlContent +='<ul class="dadoslegenda">'
            console.log(itens);
           itens.forEach(item => {
             for (let key in item) {
               console.log(`${key}: ${item[key]}`);
               htmlContent+='<li>'+ `${key}: ${item[key]}`+'</li>';
             }
+            htmlContent +='</ul>'
           });
           
           // Display properties

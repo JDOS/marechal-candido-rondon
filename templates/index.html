@@ -45,6 +45,7 @@
 
     select {
   height: 40px;
+  width: 250px; 
   font-size: 14px;
 }
 
@@ -127,7 +128,19 @@
   color: #D4AF37; /* dourado no hover */
 }
 
+.dadoslegenda {
+  list-style-type: none;
+  padding-left: 0; /* opcional: remove o recuo padrão */
+  margin: 0;        /* opcional */
+}
 
+.em-breve {
+  color: #ffeb3b; /* amarelo vibrante */
+  font-size: 10px;
+  text-shadow: 0 0 6px #fff176, 0 0 10px #ffc107;
+  font-weight: bold;
+  margin-left: 2px;
+}
     </style>
 <body>
 
@@ -135,8 +148,8 @@
   <img src="{{ url_for('static', filename='img/brasaomcr.png') }}" alt="Brasão" class="logo">
   <div class="navbar-title">Marechal Cândido Rondon</div>
   <div class="navbar-links">
-    <a href="#">Insta360</a>
-    <a href="#">WEBSIG</a>
+    <a href="#">VISÃO 360º <sup  class="em-breve">(Em breve!)</sup></a>
+    <a href="#">TOPOGRAFIA</a>
   </div>
 </div>
     <!-- Painel lateral -->
