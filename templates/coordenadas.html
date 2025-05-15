@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>OpenLayers - Captura clique e mostra coordenadas</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css"
+    type="text/css"
+  />
+  <style>
+    #map {
+      width: 100%;
+      height: 400px;
+    }
+    #info {
+      margin-top: 10px;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <h2>OpenLayers: Clique no mapa para obter coordenadas</h2>
+  <div id="map"></div>
+  <div id="info">Clique no mapa para ver as coordenadas</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+  <script>
+    // Cria o mapa OpenLayers com camada base OSM
+    const map = new ol.Map({
+      target: "map",
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM(),
+        }),
+      ],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([-54, -24.5]), // Centraliza em Lat/Lon (lon, lat)
+        zoom: 6,
+      }),
+    });
+
+    // Elemento para mostrar as coordenadas
+    const info = document.getElementById("info");
+
+    // Evento de clique no mapa
+    map.on("click", function (evt) {
+      // Pega a coordenada no sistema de projeção do mapa (EPSG:3857)
+      const coord3857 = evt.coordinate;
+      console.log("coordenadas",coord3857);
+      // Converte para longitude/latitude (EPSG:4326)
+      const coord4326 = ol.proj.toLonLat(coord3857);
+
+      // Formata as coordenadas
+      const lon = coord4326[0].toFixed(6);
+      const lat = coord4326[1].toFixed(6);
+
+      // Mostra na página
+      info.innerHTML = `Coordenadas clicadas:<br>Longitude: ${lon}, Latitude: ${lat}`;
+
+      // Também pode usar no console
+      console.log("Coordenadas EPSG:3857:", coord3857);
+      console.log("Coordenadas EPSG:4326:", coord4326);
+    });
+  </script>
+</body>
+</html>

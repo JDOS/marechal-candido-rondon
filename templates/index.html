@@ -9,24 +9,178 @@
     
 </head>
     <style>
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+     }
+
       .map {
-        width: 100%;
-        height: 400px;
+        width:100%;
+        height:100%;
       }
+
+          /* Painel lateral esquerdo */
+    .sidebar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height:100%;
+      background-color: #ffffffcc; /* branco com transparência */
+      border-right: 1px solid #ccc;
+      padding: 16px;
+      padding-top: 60px;
+      box-sizing: border-box;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+    }
+    .sidebar h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #333;
+      padding-top: 10px;
+    }
+
+    select {
+  height: 40px;
+  font-size: 14px;
+}
+
+    #layersSelect {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+    }
+     #legend {
+      max-width: 100%;
+    }
+
+.infobloco {
+  position: absolute;
+  bottom: 20px;
+  right: 0px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 12px;
+  border-radius: 4px;
+  z-index: 1000;
+  max-width: 300px;       /* Limita a largura */
+  max-height: 200px;      /* Limita a altura */
+  overflow-y: auto;       /* Rolagem se o conteúdo ultrapassar a altura */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Visual mais elegante */
+}
+     .infobloco h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    #info {
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+
+    }
+
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background-color: #1E4E79;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  z-index: 1001;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  justify-content: space-between;
+}
+
+.logo {
+  margin-left: 12px;
+  height: 36px;
+  margin-right: 12px;
+}
+
+.navbar-title {
+  font-size: 18px;
+  font-weight: bold;
+  flex: 1;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 16px;
+  padding-right: 20px;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.navbar-links a:hover {
+  color: #D4AF37; /* dourado no hover */
+}
+
+
     </style>
 <body>
- <h1>Bem-vindo ao Geo MCR!</h1>
+
+<div class="navbar">
+  <img src="{{ url_for('static', filename='img/brasaomcr.png') }}" alt="Brasão" class="logo">
+  <div class="navbar-title">Marechal Cândido Rondon</div>
+  <div class="navbar-links">
+    <a href="#">Insta360</a>
+    <a href="#">WEBSIG</a>
+  </div>
+</div>
+    <!-- Painel lateral -->
+  <div class="sidebar">
+    <h2>Camadas</h2>
+    <h2>Geral</h2>
+    <select id="layersSelect">
+      {% for layer in layers %}
+      <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
+      {% endfor %}
+    </select>
+
+    <h2>DSM</h2>
+    <select id="layersSelect2">
+      {% for layer in layers_dsm %}
+      <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
+      {% endfor %}
+    </select>
+    
+    <h2>Ortofotos</h2>
+    <select id="layersSelect3">
+      {% for layer in layers_ortofoto %}
+      <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
+      {% endfor %}
+    </select>
+
+
+  </div>
+
 
     <div id="map" class="map"></div>
-    Legend:
-    <div><img id="legend"/></div>
-    <div id="info">&nbsp;</div>
 
-    <hr>
+    <div class="infobloco">
+      <h2>Legenda</h2>
+       <div><img id="legend"/></div>
+       <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
+
+    </div>
+
+
     <script>
       const appData = {
         url: "{{ url }}",
-        layer: "{{ layers[66].name }}",
+        layer: "{{ layers[0].name }}",
 
       };
     </script>
@@ -34,11 +188,11 @@
  
 
 
-    <select id="layersSelect">
+    <!-- <select id="layersSelect">
       {% for layer in layers %}
       <option value="{{layer.name}}">{{ loop.index }} - {{layer.name}}</option>
       {% endfor %}
-    </select>
+    </select> -->
 
 
   </body>

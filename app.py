@@ -12,7 +12,7 @@ password = os.getenv("password")
 
 
 geoserver_url = "https://sistemas.itti.org.br/geoserver/rest/layers"
-geoserver_wms="https://sistemas.itti.org.br/geoserver/Sanepar/wms"
+geoserver_wms="https://sistemas.itti.org.br/geoserver/MCR/wms"
 
 
 
@@ -24,26 +24,51 @@ response = requests.get(geoserver_url, params = params, auth=HTTPBasicAuth(usern
 
 if response.status_code == 200:
     dados = response.json()
-    layers = dados['layers']['layer'];
-    # for layer in layers:
-    # 	print(layer["name"])
+    all_layers = dados['layers']['layer'];
+    layers = []
+
+    for layer in all_layers:
+        if("MCR" in layer["name"]):
+            layers.append(layer)
+            print(layer["name"])
+
+    layers_dsm = []
+    layers_ortofoto = []
+    layers_geral = []
+    for layer in layers:
+        if("Ortofoto" in layer["name"]):
+            layers_ortofoto.append(layer)
+
+        if("DSM" in layer["name"]):
+            layers_dsm.append(layer)
+ 
+        else:
+            layers_geral.append(layer)
+
+
+    print("dsm",layers_dsm)
 else:
     print("Erro:", response.status_code)
 
 print("Testando meus layers")
 
-print(layers[66])
+
 
 app = Flask(__name__)
 
 # Rota principal
 @app.route('/')
 def home():
-    return render_template("index.html",layers=layers,url=geoserver_wms)
+    return render_template("index.html",layers=layers,layers_dsm=layers_dsm,layers_ortofoto=layers_ortofoto,url=geoserver_wms)
 
 @app.route('/esri')
 def esri():
     return render_template("esri-map.html")
+
+@app.route('/coo')
+def coo():
+    return render_template("coordenadas.html")
+
 
 @app.route('/geoserver')
 def geoserver():

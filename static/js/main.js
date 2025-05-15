@@ -31,6 +31,8 @@ console.log("URLS:", appData.url);
     }),
   })
 
+  
+
   document.getElementById('layersSelect').addEventListener('change', function () {
     const novaLayer = this.value;
     atualizarLayer(novaLayer);
@@ -48,9 +50,20 @@ const updateLegend = function (resolution) {
 };
 
 const layers = [
-  new TileLayer({
+ new TileLayer({
     source: new OSM(),
   }),
+  // new Layer({
+  //     source: new Source({
+  //       attributions:
+  //         'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
+  //         'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
+  //       url:
+  //         'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+  //         'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+  //     }),
+  //   }),
+
   new ImageLayer({
     extent: [-13884991, 2870341, -7455066, 6338219],
     source: wmsSource,
@@ -59,8 +72,8 @@ const layers = [
 ];
 
 const view = new View({
-  center: [-5482713, -2930080],
-  zoom: 10,
+  center: [-6018157.509443143, -2821599.328614264],
+  zoom: 12,
 });
 
 const map = new Map({
@@ -81,6 +94,7 @@ map.getView().on('change:resolution', function (event) {
 
 map.on('singleclick', function (evt) {
   document.getElementById('info').innerHTML = '';
+  console.log();
   const viewResolution = view.getResolution();
   const url = layer1.getSource().getFeatureInfoUrl(
     evt.coordinate,
@@ -101,6 +115,7 @@ map.on('singleclick', function (evt) {
           let itens = properties;
           let htmlContent =''
 
+           console.log(itens);
           itens.forEach(item => {
             for (let key in item) {
               console.log(`${key}: ${item[key]}`);
@@ -127,15 +142,4 @@ map.on('singleclick', function (evt) {
   //       document.getElementById('info').innerHTML = html;
   //     });
   // }
-});
-
-
-
-map.on('pointermove', function (evt) {
-  if (evt.dragging) {
-    return;
-  }
-  const data = layer1.getData(evt.pixel);
-  const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
-  map.getTargetElement().style.cursor = hit ? 'pointer' : '';
 });
