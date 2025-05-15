@@ -13,8 +13,8 @@ console.log("URLS:", appData.url);
 
     const wmsSource = new ImageWMS({
       url: appData.url,
-    //  params: {'LAYERS': "Sanepar:Coberturas vegetais"},
-      params: {'LAYERS': appData.layer, 'TILED': true},
+      params: {'LAYERS': "MCR:Novo Horizonte - Ortofoto"},
+    //  params: {'LAYERS': appData.layer, 'TILED': true},
 
       serverType: 'geoserver',
      
@@ -82,8 +82,9 @@ const layers = [
 ];
 
 const view = new View({
-  center: [-6018157.509443143, -2821599.328614264],
-  zoom: 12,
+  //center: [-6018157.509443143, -2821599.328614264],
+  center:[-6024580.481842517, -2816502.8210687554],
+  zoom: 18,
 });
 
 const map = new Map({
@@ -104,7 +105,8 @@ map.getView().on('change:resolution', function (event) {
 
 map.on('singleclick', function (evt) {
   document.getElementById('info').innerHTML = '';
-  console.log();
+  const coord3857 = evt.coordinate;
+  console.log("coordenadas",coord3857);
   const viewResolution = view.getResolution();
   const url = layer1.getSource().getFeatureInfoUrl(
     evt.coordinate,
