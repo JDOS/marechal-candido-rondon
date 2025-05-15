@@ -33,7 +33,17 @@ console.log("URLS:", appData.url);
 
   
 
-  document.getElementById('layersSelect').addEventListener('change', function () {
+  document.getElementById('layersSelect1').addEventListener('change', function () {
+    const novaLayer = this.value;
+    atualizarLayer(novaLayer);
+  });
+
+    document.getElementById('layersSelect2').addEventListener('change', function () {
+    const novaLayer = this.value;
+    atualizarLayer(novaLayer);
+  });
+
+      document.getElementById('layersSelect3').addEventListener('change', function () {
     const novaLayer = this.value;
     atualizarLayer(novaLayer);
   });

@@ -143,8 +143,8 @@
   <div class="sidebar">
     <h2>Camadas</h2>
     <h2>Geral</h2>
-    <select id="layersSelect">
-      {% for layer in layers %}
+    <select id="layersSelect1">
+      {% for layer in layers_geral %}
       <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
       {% endfor %}
     </select>

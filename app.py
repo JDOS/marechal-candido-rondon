@@ -42,9 +42,10 @@ if response.status_code == 200:
         if("DSM" in layer["name"]):
             layers_dsm.append(layer)
  
-        else:
-            layers_geral.append(layer)
-
+    for layer in layers:
+        if(layer not in layers_dsm):
+            if(layer not in layers_ortofoto):
+                layers_geral.append(layer)
 
     print("dsm",layers_dsm)
 else:
@@ -59,25 +60,25 @@ app = Flask(__name__)
 # Rota principal
 @app.route('/')
 def home():
-    return render_template("index.html",layers=layers,layers_dsm=layers_dsm,layers_ortofoto=layers_ortofoto,url=geoserver_wms)
+    return render_template("index.html",layers=layers,layers_geral=layers_geral,layers_dsm=layers_dsm,layers_ortofoto=layers_ortofoto,url=geoserver_wms)
 
-@app.route('/esri')
-def esri():
-    return render_template("esri-map.html")
+# @app.route('/esri')
+# def esri():
+#     return render_template("esri-map.html")
 
-@app.route('/coo')
-def coo():
-    return render_template("coordenadas.html")
+# @app.route('/coo')
+# def coo():
+#     return render_template("coordenadas.html")
 
 
-@app.route('/geoserver')
-def geoserver():
-    return render_template("esri-geoserver.html")
+# @app.route('/geoserver')
+# def geoserver():
+#     return render_template("esri-geoserver.html")
 
 # Outra rota
-@app.route('/sobre')
-def sobre():
-    return "<h2>Sobre o projeto</h2><p>Feito com Flask!</p>"
+# @app.route('/sobre')
+# def sobre():
+#     return "<h2>Sobre o projeto</h2><p>Feito com Flask!</p>"
 
 if __name__ == '__main__':
     app.run(debug=True)
