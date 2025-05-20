@@ -6,7 +6,10 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css" />
     <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<!-- JS do Choices -->
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 </head>
     <style>
 
@@ -176,6 +179,12 @@
       {% endfor %}
     </select>
 
+ <h2>Ortofotos</h2>
+<select id="multiSelectInput" multiple>
+  {% for layer in layers_ortofoto %}
+  <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
+  {% endfor %}
+</select>
 
   </div>
 
@@ -207,7 +216,20 @@
       {% endfor %}
     </select> -->
 
+<script>
+  const multiSelect = new Choices('#multiSelectInput', {
+    removeItemButton: true,
+    placeholderValue: 'Selecione Camadas...',
+    searchPlaceholderValue: 'Buscar...',
+    noResultsText: 'Nenhum resultado encontrado',
+    noChoicesText: 'Sem opções disponíveis',
+  });
 
-  </body>
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 </body>
 </html>

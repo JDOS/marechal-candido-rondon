@@ -48,6 +48,12 @@ console.log("URLS:", appData.url);
     atualizarLayer(novaLayer);
   });
 
+    document.getElementById('multiSelectInput').addEventListener('change', function () {
+      const selectedValues = multiSelect.getValue(true); // retorna array de valores
+      console.log(selectedValues); // Ex: ['banana', 'grape']
+      //atualizarLayer(novaLayer);
+  });
+
   function atualizarLayer(novoLayer){
     appData.layer = novoLayer;
     layer1.getSource().updateParams({ 'LAYERS': novoLayer });
