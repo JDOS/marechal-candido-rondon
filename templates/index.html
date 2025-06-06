@@ -179,12 +179,41 @@
       {% endfor %}
     </select>
 
- <h2>Ortofotos</h2>
+ <h2>Camadas</h2>
 <select id="multiSelectInput" multiple>
-  {% for layer in layers_ortofoto %}
-  <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
+  <optgroup  label="Geral">
+  {% for layer in layers.MCR__Geral %}
+  <option value="{{layer.0}}">{{ loop.index }} - {{layer.1 }}</option>
   {% endfor %}
+  </optgroup>
+
+  <optgroup  label="MDS">
+  {% for layer in layers.MCR__MDS %}
+  <option value="{{layer.0}}">{{ loop.index }} - {{layer.1 }}</option>
+  {% endfor %}
+  </optgroup>
+
+    <optgroup  label="Ortofoto">
+  {% for layer in layers.MCR__Ortofoto %}
+  <option value="{{layer.0}}">{{ loop.index }} - {{layer.1 }}</option>
+  {% endfor %}
+  </optgroup>
+
+  <optgroup  label="PM">
+  {% for layer in layers.Pm__P3 %}
+  <option value="{{layer.0}}">{{ loop.index }} - {{layer.1 }}</option>
+  {% endfor %}
+  </optgroup>
+
 </select>
+
+<fieldset>
+  <legend>Geral</legend>
+   {% for layer in layers.MCR__Geral %}
+  <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
+  <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
+  {% endfor %}
+</fieldset>
 
   </div>
 
@@ -225,7 +254,15 @@
     noChoicesText: 'Sem opções disponíveis',
   });
 
-
+// Captura mudanças em QUALQUER checkbox da página
+// document.addEventListener('change', function(event) {
+//   if (event.target.type === 'checkbox') {
+//     console.log('Checkbox alterado:', event.target);
+//     console.log('ID:', event.target.id);
+//     console.log('Valor:', event.target.value);
+//     console.log('Marcado:', event.target.checked);
+//   }
+// });
 
 </script>
 

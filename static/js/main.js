@@ -31,41 +31,7 @@ console.log("URLS:", appData.url);
     }),
   })
 
-  
-
-  document.getElementById('layersSelect1').addEventListener('change', function () {
-    const novaLayer = this.value;
-    atualizarLayer(novaLayer);
-  });
-
-    document.getElementById('layersSelect2').addEventListener('change', function () {
-    const novaLayer = this.value;
-    atualizarLayer(novaLayer);
-  });
-
-      document.getElementById('layersSelect3').addEventListener('change', function () {
-    const novaLayer = this.value;
-    atualizarLayer(novaLayer);
-  });
-
-    document.getElementById('multiSelectInput').addEventListener('change', function () {
-      const selectedValues = multiSelect.getValue(true); // retorna array de valores
-      console.log(selectedValues); // Ex: ['banana', 'grape']
-      //atualizarLayer(novaLayer);
-  });
-
-  function atualizarLayer(novoLayer){
-    appData.layer = novoLayer;
-    layer1.getSource().updateParams({ 'LAYERS': novoLayer });
-  }
-
-const updateLegend = function (resolution) {
-  const graphicUrl = wmsSource.getLegendUrl(resolution);
-  const img = document.getElementById('legend');
-  img.src = graphicUrl;
-};
-
-const layers = [
+  const layers = [
  new TileLayer({
     source: new OSM(),
   }),
@@ -86,6 +52,65 @@ const layers = [
   }),
   layer1,
 ];
+
+  document.getElementById('layersSelect1').addEventListener('change', function () {
+    const novaLayer = this.value;
+    atualizarLayer(novaLayer);
+  });
+
+    document.getElementById('layersSelect2').addEventListener('change', function () {
+    const novaLayer = this.value;
+    atualizarLayer(novaLayer);
+  });
+
+      document.getElementById('layersSelect3').addEventListener('change', function () {
+    const novaLayer = this.value;
+    atualizarLayer(novaLayer);
+  });
+
+document.addEventListener('change', function(event) {
+  if (event.target.type === 'checkbox') {
+    if (event.target.value){
+      const wmsLayer =  new TileLayer({
+        source: new TileWMS({
+          url: appData.url,
+          params: {
+            'LAYERS': event.target.value, 
+            'TILED': true,
+            'FORMAT': 'image/png',
+            'TRANSPARENT': true
+          },
+          serverType: 'geoserver',
+          transition: 0,
+          crossOrigin: 'anonymous',
+        }),
+        visible: true
+      });
+
+      map.addLayer(wmsLayer);
+
+      console.log('Valor:', event.target.value);
+    }
+
+    if (event.target.value==false){
+      console.log('Valor:', event.target.value);
+    }
+  }
+});
+
+
+  function atualizarLayer(novoLayer){
+    appData.layer = novoLayer;
+    layer1.getSource().updateParams({ 'LAYERS': novoLayer });
+  }
+
+const updateLegend = function (resolution) {
+  const graphicUrl = wmsSource.getLegendUrl(resolution);
+  const img = document.getElementById('legend');
+  img.src = graphicUrl;
+};
+
+
 
 const view = new View({
   //center: [-6018157.509443143, -2821599.328614264],
