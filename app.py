@@ -30,8 +30,6 @@ if response.status_code == 200:
     for layer in all_layers:
         if("MCR" in layer["name"]):
             layers.append(layer)
-            print(layer["name"])
-
     layers_dsm = []
     layers_ortofoto = []
     layers_geral = []
@@ -51,15 +49,12 @@ if response.status_code == 200:
 else:
     print("Erro:", response.status_code)
 
-print("Testando meus layers")
-
 
 def getlayers():
     WORKSPACE = "MCR"
     wms = WebMapService("https://sistemas.itti.org.br/geoserver/MCR/ows?service=WMS&version=1.1.1&request=GetCapabilities")
     list_produts = {}
     for name in wms.contents:
-        print(name)
         layer = wms[name]
         if hasattr(layer, 'children') and layer.children:
             nomelayer=str(name).replace(" ","_")
@@ -74,38 +69,12 @@ def getlayers():
 layersmult = getlayers()
 
 app = Flask(__name__)
-print("teste layersssssss")
 layersmult = getlayers()
-for k,v in layersmult.items():
-    print(k,v)
-    
+
 # Rota principal
 @app.route('/')
 def home():
-    print("teste layersssssss")
-    layersmult = getlayers()
-    for k,v in layersmult.items():
-        print(k,v)
-
     return render_template("index.html",layers=layersmult,url=geoserver_wms)
-
-# @app.route('/esri')
-# def esri():
-#     return render_template("esri-map.html")
-
-# @app.route('/coo')
-# def coo():
-#     return render_template("coordenadas.html")
-
-
-# @app.route('/geoserver')
-# def geoserver():
-#     return render_template("esri-geoserver.html")
-
-# Outra rota
-# @app.route('/sobre')
-# def sobre():
-#     return "<h2>Sobre o projeto</h2><p>Feito com Flask!</p>"
 
 if __name__ == '__main__':
     app.run(debug=True)
