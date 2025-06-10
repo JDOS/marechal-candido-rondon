@@ -12,7 +12,6 @@
 </head>
     <style>
 
-
     </style>
 <body>
 
@@ -27,26 +26,6 @@
     <!-- Painel lateral -->
   <div class="sidebar">
     <h2>Camadas</h2>
-    <h2>Geral</h2>
-    <select id="layersSelect1">
-      {% for layer in layers_geral %}
-      <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
-      {% endfor %}
-    </select>
-
-    <h2>DSM</h2>
-    <select id="layersSelect2">
-      {% for layer in layers_dsm %}
-      <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
-      {% endfor %}
-    </select>
-    
-    <h2>Ortofotos</h2>
-    <select id="layersSelect3">
-      {% for layer in layers_ortofoto %}
-      <option value="{{layer.name}}">{{ loop.index }} - {{layer.name }}</option>
-      {% endfor %}
-    </select>
 
 
     <button class="collapsible" onclick="toggleCollapsible(this)">
@@ -94,48 +73,19 @@
         <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
       {% endfor %}
     </div>
-
   </div>
 
 
-    <div id="map" class="map"></div>
+  <div id="map" class="map"></div>
 
-    <div class="infobloco">
-      <h2>Legenda</h2>
-       <div><img id="legend"/></div>
-       <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
+  <div class="infobloco">
+    <h2>Legenda</h2>
+    <div><img id="legend"/></div>
+    <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
+  </div>
 
-    </div>
-
-
-    <script>
-      const appData = {
-        url: "{{ url }}",
-        layer: "MCR:Novo Horizonte - Ortofoto",
-
-      };
-    </script>
-
- 
-
-
-    <!-- <select id="layersSelect">
-      {% for layer in layers %}
-      <option value="{{layer.name}}">{{ loop.index }} - {{layer.name}}</option>
-      {% endfor %}
-    </select> -->
 
 <script>
-
-
-// document.addEventListener('change', function(event) {
-//   if (event.target.type === 'checkbox') {
-//     console.log('Checkbox alterado:', event.target);
-//     console.log('ID:', event.target.id);
-//     console.log('Valor:', event.target.value);
-//     console.log('Marcado:', event.target.checked);
-//   }
-// });
 
 function toggleCollapsible(button) {
   const icon = button.querySelector('.icon');

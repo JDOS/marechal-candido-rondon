@@ -87,7 +87,7 @@ def home():
     for k,v in layersmult.items():
         print(k,v)
 
-    return render_template("index.html",layers=layersmult,layers_geral=layers_geral,layers_dsm=layers_dsm,layers_ortofoto=layers_ortofoto,url=geoserver_wms)
+    return render_template("index.html",layers=layersmult,url=geoserver_wms)
 
 # @app.route('/esri')
 # def esri():
