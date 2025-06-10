@@ -5,145 +5,14 @@
     <title>Marechal Candido Rondon - Topografia </title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-<!-- JS do Choices -->
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    
 
 </head>
     <style>
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-     }
 
-      .map {
-        width:100%;
-        height:100%;
-      }
-
-          /* Painel lateral esquerdo */
-    .sidebar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 300px;
-      height:100%;
-      background-color: #ffffffcc; /* branco com transparência */
-      border-right: 1px solid #ccc;
-      padding: 16px;
-      padding-top: 60px;
-      box-sizing: border-box;
-      z-index: 1000;
-      font-family: Arial, sans-serif;
-    }
-    .sidebar h2 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #333;
-      padding-top: 10px;
-    }
-
-    select {
-  height: 40px;
-  width: 250px; 
-  font-size: 14px;
-}
-
-    #layersSelect {
-      width: 100%;
-      padding: 8px;
-      font-size: 14px;
-    }
-     #legend {
-      max-width: 100%;
-    }
-
-.infobloco {
-  position: absolute;
-  bottom: 20px;
-  right: 0px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 6px 12px;
-  border-radius: 4px;
-  z-index: 1000;
-  max-width: 300px;       /* Limita a largura */
-  max-height: 200px;      /* Limita a altura */
-  overflow-y: auto;       /* Rolagem se o conteúdo ultrapassar a altura */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Visual mais elegante */
-}
-     .infobloco h2 {
-      margin-top: 0;
-      font-size: 18px;
-      color: #333;
-    }
-
-    #info {
-      font-size: 14px;
-      font-family: Arial, sans-serif;
-
-    }
-
-.navbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50px;
-  background-color: #1E4E79;
-  color: white;
-  display: flex;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  z-index: 1001;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  justify-content: space-between;
-}
-
-.logo {
-  margin-left: 12px;
-  height: 36px;
-  margin-right: 12px;
-}
-
-.navbar-title {
-  font-size: 18px;
-  font-weight: bold;
-  flex: 1;
-}
-
-.navbar-links {
-  display: flex;
-  gap: 16px;
-  padding-right: 20px;
-}
-
-.navbar-links a {
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.2s;
-}
-
-.navbar-links a:hover {
-  color: #D4AF37; /* dourado no hover */
-}
-
-.dadoslegenda {
-  list-style-type: none;
-  padding-left: 0; /* opcional: remove o recuo padrão */
-  margin: 0;        /* opcional */
-}
-
-.em-breve {
-  color: #ffeb3b; /* amarelo vibrante */
-  font-size: 10px;
-  text-shadow: 0 0 6px #fff176, 0 0 10px #ffc107;
-  font-weight: bold;
-  margin-left: 2px;
-}
     </style>
 <body>
 
@@ -179,41 +48,52 @@
       {% endfor %}
     </select>
 
- <h2>Camadas</h2>
-<select id="multiSelectInput" multiple>
-  <optgroup  label="Geral">
-  {% for layer in layers.MCR__Geral %}
-  <option value="{{layer.0}}">{{ loop.index }} - {{layer.1 }}</option>
-  {% endfor %}
-  </optgroup>
 
-  <optgroup  label="MDS">
-  {% for layer in layers.MCR__MDS %}
-  <option value="{{layer.0}}">{{ loop.index }} - {{layer.1 }}</option>
-  {% endfor %}
-  </optgroup>
+    <button class="collapsible" onclick="toggleCollapsible(this)">
+      <span class="icon">+</span>
+        Geral
+    </button>
+    <div class="content-selectbox">
+      {% for layer in layers.MCR__Geral %}
+        <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
+        <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
+      {% endfor %}
+    </div>
 
-    <optgroup  label="Ortofoto">
-  {% for layer in layers.MCR__Ortofoto %}
-  <option value="{{layer.0}}">{{ loop.index }} - {{layer.1 }}</option>
-  {% endfor %}
-  </optgroup>
 
-  <optgroup  label="PM">
-  {% for layer in layers.Pm__P3 %}
-  <option value="{{layer.0}}">{{ loop.index }} - {{layer.1 }}</option>
-  {% endfor %}
-  </optgroup>
+    <button class="collapsible" onclick="toggleCollapsible(this)">
+      <span class="icon">+</span>
+        DSM
+    </button>
+    <div class="content-selectbox">
+      {% for layer in layers.MCR__MDS %}
+        <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
+        <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
+      {% endfor %}
+    </div>
 
-</select>
+    
+    <button class="collapsible" onclick="toggleCollapsible(this)">
+      <span class="icon">+</span>
+        Ortofotos
+    </button>
+    <div class="content-selectbox">
+      {% for layer in layers.MCR__Ortofoto %}
+        <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
+        <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
+      {% endfor %}
+    </div>
 
-<fieldset>
-  <legend>Geral</legend>
-   {% for layer in layers.MCR__Geral %}
-  <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
-  <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
-  {% endfor %}
-</fieldset>
+    <button class="collapsible" onclick="toggleCollapsible(this)">
+      <span class="icon">+</span>
+        PM - P3
+    </button>
+    <div class="content-selectbox">
+      {% for layer in layers.Pm__P3 %}
+        <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
+        <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
+      {% endfor %}
+    </div>
 
   </div>
 
@@ -246,15 +126,8 @@
     </select> -->
 
 <script>
-  const multiSelect = new Choices('#multiSelectInput', {
-    removeItemButton: true,
-    placeholderValue: 'Selecione Camadas...',
-    searchPlaceholderValue: 'Buscar...',
-    noResultsText: 'Nenhum resultado encontrado',
-    noChoicesText: 'Sem opções disponíveis',
-  });
 
-// Captura mudanças em QUALQUER checkbox da página
+
 // document.addEventListener('change', function(event) {
 //   if (event.target.type === 'checkbox') {
 //     console.log('Checkbox alterado:', event.target);
@@ -264,9 +137,19 @@
 //   }
 // });
 
-</script>
+function toggleCollapsible(button) {
+  const icon = button.querySelector('.icon');
+  const content = button.nextElementSibling;
+  if (content.style.display === "block") {
+    content.style.display = "none";
+    icon.textContent = "+";
+  } else {
+    content.style.display = "block";
+    icon.textContent = "-";
+  }
+}
 
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+</script>
 
 </body>
 </html>

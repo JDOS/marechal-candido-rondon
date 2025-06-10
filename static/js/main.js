@@ -53,6 +53,23 @@ console.log("URLS:", appData.url);
   layer1,
 ];
 
+ document.addEventListener('change', function(event) {
+    if (event.target.type === 'checkbox') {
+      if (event.target.checked === true) {
+          console.log('Valor:', event.target.value);
+      }
+      if (event.target.checked === false) {
+
+      }
+    }
+ });
+//     console.log('Checkbox alterado:', event.target);
+//     console.log('ID:', event.target.id);
+//     console.log('Valor:', event.target.value);
+//     console.log('Marcado:', event.target.checked);
+//   }
+// });
+
   document.getElementById('layersSelect1').addEventListener('change', function () {
     const novaLayer = this.value;
     atualizarLayer(novaLayer);
@@ -67,36 +84,6 @@ console.log("URLS:", appData.url);
     const novaLayer = this.value;
     atualizarLayer(novaLayer);
   });
-
-document.addEventListener('change', function(event) {
-  if (event.target.type === 'checkbox') {
-    if (event.target.value){
-      const wmsLayer =  new TileLayer({
-        source: new TileWMS({
-          url: appData.url,
-          params: {
-            'LAYERS': event.target.value, 
-            'TILED': true,
-            'FORMAT': 'image/png',
-            'TRANSPARENT': true
-          },
-          serverType: 'geoserver',
-          transition: 0,
-          crossOrigin: 'anonymous',
-        }),
-        visible: true
-      });
-
-      map.addLayer(wmsLayer);
-
-      console.log('Valor:', event.target.value);
-    }
-
-    if (event.target.value==false){
-      console.log('Valor:', event.target.value);
-    }
-  }
-});
 
 
   function atualizarLayer(novoLayer){
