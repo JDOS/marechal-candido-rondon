@@ -66,14 +66,14 @@ def getlayers():
                 list_produts[nomelayer].append(tupla)
     return list_produts
 
-layersmult = getlayers()
+#layersmult = getlayers()
 
 app = Flask(__name__)
-layersmult = getlayers()
 
 # Rota principal
 @app.route('/')
 def home():
+    layersmult = getlayers()
     return render_template("index.html",layers=layersmult,url=geoserver_wms)
 
 if __name__ == '__main__':
