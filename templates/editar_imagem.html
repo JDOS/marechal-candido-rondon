@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Imagem</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        h1 { text-align: center; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; }
+        input[type="text"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        input[type="submit"] { padding: 10px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        input[type="submit"]:hover { background-color: #218838; }
+        img { max-width: 200px; display: block; margin: 0 auto 20px; border-radius: 4px; }
+        .nav-link { display: block; text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Editar Informações da Imagem</h1>
+    
+    <img src="{{ url_for('uploaded_file', filename=imagem.filename) }}" alt="Preview">
+
+    <form method="post">
+        <div>
+            <label for="latitude">Latitude:</label>
+            <!-- O valor atual é pré-preenchido usando o objeto 'imagem' -->
+            <input type="text" id="latitude" name="latitude" value="{{ imagem.latitude }}" required>
+        </div>
+        <div>
+            <label for="longitude">Longitude:</label>
+            <input type="text" id="longitude" name="longitude" value="{{ imagem.longitude }}" required>
+        </div>
+        <div>
+            <input type="submit" value="Salvar Alterações">
+        </div>
+    </form>
+
+    <a href="{{ url_for('listar_imagens') }}" class="nav-link">Cancelar e voltar para a lista</a>
+</body>
+</html>

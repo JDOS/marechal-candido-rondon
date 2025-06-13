@@ -19,7 +19,7 @@
   <img src="{{ url_for('static', filename='img/brasaomcr.png') }}" alt="Brasão" class="logo">
   <div class="navbar-title">Marechal Cândido Rondon</div>
   <div class="navbar-links">
-    <a href="#">VISÃO 360º <sup  class="em-breve">(Em breve!)</sup></a>
+    <!-- <a href="#">VISÃO 360º <sup  class="em-breve">(Em breve!)</sup></a> -->
     <a href="#">TOPOGRAFIA</a>
   </div>
 </div>
@@ -65,7 +65,7 @@
 
     <button class="collapsible" onclick="toggleCollapsible(this)">
       <span class="icon">+</span>
-        Fotos 360º
+        Visão 360º
     </button>
     <div class="content-selectbox">
         <input type="checkbox" id="layer-toggle" checked>
@@ -77,36 +77,30 @@
 
   <div id="map" class="map"></div>
 
-  <div class="infobloco">
+  <!-- <div class="infobloco">
     <h2>Legenda</h2>
     <div><img id="legend"/></div>
     <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
   </div>
-
+ -->
 
 
 <script>
 
+
+
 const markerDataList = [
-    { 
-        coords: [2.2945, 48.8584], 
-        name: 'Torre Eiffel', 
-        // URL de uma imagem JPG da Torre Eiffel
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/800px-Tour_Eiffel_Wikimedia_Commons.jpg' 
-    },
-    { 
-        coords: [2.3377, 48.8606], 
-        name: 'Museu do Louvre', 
-        // URL de uma imagem JPG do Louvre
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Louvre_Pyramid.jpg/640px-Louvre_Pyramid.jpg' 
-    },
-    { 
-        coords: [2.3522, 48.8566],
-        name: 'Catedral de Notre-Dame',
-        // URL de uma imagem JPG de Notre-Dame
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Notre-Dame_de_Paris_2013.JPG/640px-Notre-Dame_de_Paris_2013.JPG'
-    }
-];
+          {% for imagem in imagens %}
+
+          {
+            "coords": [{{ imagem.longitude }},{{ imagem.latitude }}], 
+            "name": 'Torre Eiffel', 
+            "icon": "{{ url_for('uploaded_file', filename=imagem.filename) }}",
+            "link": "{{ url_for('animacao', filename=imagem.filename) }}"
+          },
+
+          {% endfor %}
+]
 
 
 

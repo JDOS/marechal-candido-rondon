@@ -32,14 +32,15 @@ const wmsSource = new ImageWMS({
 const featuresList = markerDataList.map(function(data) {
     const feature = new Feature({
         geometry: new Point(fromLonLat(data.coords)), // Usa Point e fromLonLat importados
-        name: data.name
+        name: data.name,
+        link: data.link
     });
 
     const iconStyle = new Style({ // Usa Style importado
         image: new Icon({         // Usa Icon importado
             anchor: [0.5, 1],
             src: data.icon,
-            scale: 0.05,
+            scale: 0.01,
         }),
     });
     
@@ -56,6 +57,8 @@ const vectorLayer = new VectorLayer({ // Usa VectorLayer importado
     source: vectorSource,
 });
 
+vectorLayer.setZIndex(100);
+
 // Pega o elemento checkbox do HTML pelo seu ID
 const layerToggleCheckbox = document.getElementById('layer-toggle');
 
@@ -66,24 +69,29 @@ layerToggleCheckbox.addEventListener('change', function() {
     vectorLayer.setVisible(this.checked);
 });
 
+const wmslayercompleto =   new ImageLayer({
+    extent: [-13884991, 2870341, -7455066, 6338219],
+    source: wmsSource,
+  });
+
+wmslayercompleto.setZIndex(100);
 
  const layers = [
  new TileLayer({
     source: new OSM(),
   }),
-  new ImageLayer({
-    extent: [-13884991, 2870341, -7455066, 6338219],
-    source: wmsSource,
-  }),
+
+wmslayercompleto,
+
   vectorLayer,
 ];
 
 
-const updateLegend = function (resolution) {
-  const graphicUrl = wmsSource.getLegendUrl(resolution);
-  const img = document.getElementById('legend');
-  img.src = graphicUrl;
-};
+// const updateLegend = function (resolution) {
+//   const graphicUrl = wmsSource.getLegendUrl(resolution);
+//   const img = document.getElementById('legend');
+//   img.src = graphicUrl;
+// };
 
 
 const view = new View({
@@ -99,49 +107,49 @@ const map = new Map({
 
 
 const resolution = map.getView().getResolution();
-updateLegend(resolution);
+//updateLegend(resolution);
 
 
 map.getView().on('change:resolution', function (event) {
   const resolution = event.target.getResolution();
-  updateLegend(resolution);
+ // updateLegend(resolution);
 });
 
 
 
-map.on('singleclick', function (evt) {
-  document.getElementById('info').innerHTML = '';
-  const viewResolution = view.getResolution();
+// map.on('singleclick', function (evt) {
+//   document.getElementById('info').innerHTML = '';
+//   const viewResolution = view.getResolution();
 
-  // Para guardar as promessas de cada fetch
-  const fetchPromises = [];
+//   // Para guardar as promessas de cada fetch
+//   const fetchPromises = [];
 
-  wmsLayers.forEach((obj) => {
-    const source = obj.layer.getSource();
-    if (typeof source.getFeatureInfoUrl === 'function') {
-      const url = source.getFeatureInfoUrl(
-        evt.coordinate,
-        viewResolution,
-        'EPSG:3857',
-        {'INFO_FORMAT': 'text/html'},
-      );  
-    if (url) {
-      // Adiciona a promessa ao array
-      fetchPromises.push(
-        fetch(url)
-          .then((response) => response.text())
-          .then((html) => html)
-      );
-    }
-    }
-  });
+//   wmsLayers.forEach((obj) => {
+//     const source = obj.layer.getSource();
+//     if (typeof source.getFeatureInfoUrl === 'function') {
+//       const url = source.getFeatureInfoUrl(
+//         evt.coordinate,
+//         viewResolution,
+//         'EPSG:3857',
+//         {'INFO_FORMAT': 'text/html'},
+//       );  
+//     if (url) {
+//       // Adiciona a promessa ao array
+//       fetchPromises.push(
+//         fetch(url)
+//           .then((response) => response.text())
+//           .then((html) => html)
+//       );
+//     }
+//     }
+//   });
 
-  // Quando todas as requisições terminarem, mostra o resultado
-  Promise.all(fetchPromises).then((results) => {
-    // Junta todos os resultados em uma única string
-    document.getElementById('info').innerHTML = results.join('<hr>');
-  });
-});
+//   // Quando todas as requisições terminarem, mostra o resultado
+//   Promise.all(fetchPromises).then((results) => {
+//     // Junta todos os resultados em uma única string
+//     document.getElementById('info').innerHTML = results.join('<hr>');
+//   });
+// });
 
 const wmsLayers = [];
 
@@ -192,3 +200,25 @@ function atualizarLayer(novoLayer){
   appData.layer = novoLayer;
   layer1.getSource().updateParams({ 'LAYERS': novoLayer });
 }
+
+
+// Mudar o cursor ao passar por cima de um marcador
+map.on('pointermove', function (e) {
+    const pixel = map.getEventPixel(e.originalEvent);
+    const hit = map.hasFeatureAtPixel(pixel);
+    map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+});
+
+// Lógica do clique no marcador
+map.on('click', function (e) {
+    // A peça-chave: itera sobre cada feature no pixel clicado
+    map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
+        // Pega a propriedade 'link' que armazenamos no feature
+        const link = feature.get('link');
+        
+        if (link) {
+            // Abre o link em uma nova aba do navegador
+            window.open(link, '_blank');
+        }
+    });
+});
