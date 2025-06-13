@@ -6,6 +6,13 @@ import TileLayer from 'https://cdn.skypack.dev/ol/layer/Tile.js';
 import ImageWMS from 'https://cdn.skypack.dev/ol/source/ImageWMS.js';
 import OSM from 'https://cdn.skypack.dev/ol/source/OSM';
 import TileWMS from 'https://cdn.skypack.dev/ol/source/TileWMS.js';
+import VectorSource from 'https://cdn.skypack.dev/ol/source/Vector.js';
+import Feature from 'https://cdn.skypack.dev/ol/Feature.js';
+import Point from 'https://cdn.skypack.dev/ol/geom/Point.js';
+import { fromLonLat } from 'https://cdn.skypack.dev/ol/proj.js';
+import Style from 'https://cdn.skypack.dev/ol/style/Style.js';
+import Icon from 'https://cdn.skypack.dev/ol/style/Icon.js';
+import VectorLayer from 'https://cdn.skypack.dev/ol/layer/Vector.js';
 
 const appData = {
   url: "https://sistemas.itti.org.br/geoserver/MCR/wms",
@@ -21,6 +28,45 @@ const wmsSource = new ImageWMS({
 });
 
 
+// Cria a lista de Features a partir dos dados (sem o prefixo 'ol.')
+const featuresList = markerDataList.map(function(data) {
+    const feature = new Feature({
+        geometry: new Point(fromLonLat(data.coords)), // Usa Point e fromLonLat importados
+        name: data.name
+    });
+
+    const iconStyle = new Style({ // Usa Style importado
+        image: new Icon({         // Usa Icon importado
+            anchor: [0.5, 1],
+            src: data.icon,
+            scale: 0.05,
+        }),
+    });
+    
+    feature.setStyle(iconStyle);
+    return feature;
+});
+
+// Cria a camada vetorial
+const vectorSource = new VectorSource({ // Usa VectorSource importado
+    features: featuresList,
+});
+
+const vectorLayer = new VectorLayer({ // Usa VectorLayer importado
+    source: vectorSource,
+});
+
+// Pega o elemento checkbox do HTML pelo seu ID
+const layerToggleCheckbox = document.getElementById('layer-toggle');
+
+// Adiciona um "ouvinte" para o evento 'change' (quando o estado do checkbox muda)
+layerToggleCheckbox.addEventListener('change', function() {
+    // A propriedade 'this.checked' será 'true' se estiver marcado, e 'false' se não.
+    // O método setVisible() da camada aceita exatamente esses valores booleanos.
+    vectorLayer.setVisible(this.checked);
+});
+
+
  const layers = [
  new TileLayer({
     source: new OSM(),
@@ -29,6 +75,7 @@ const wmsSource = new ImageWMS({
     extent: [-13884991, 2870341, -7455066, 6338219],
     source: wmsSource,
   }),
+  vectorLayer,
 ];
 
 
@@ -116,7 +163,8 @@ document.addEventListener('change', function(event) {
                             url: appData.url,
                             params: {
                               'LAYERS': event.target.value, 
-                              'TILED': true
+                              'TILED': true,
+                              'FORMAT': 'image/png8'
                             },
                                serverType: 'geoserver',
                               transition: 0,

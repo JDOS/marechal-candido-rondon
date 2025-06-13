@@ -45,7 +45,6 @@ if response.status_code == 200:
             if(layer not in layers_ortofoto):
                 layers_geral.append(layer)
 
-    print("dsm",layers_dsm)
 else:
     print("Erro:", response.status_code)
 
@@ -75,6 +74,20 @@ app = Flask(__name__)
 def home():
     layersmult = getlayers()
     return render_template("index.html",layers=layersmult,url=geoserver_wms)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

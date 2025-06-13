@@ -65,14 +65,13 @@
 
     <button class="collapsible" onclick="toggleCollapsible(this)">
       <span class="icon">+</span>
-        PM - P3
+        Fotos 360º
     </button>
     <div class="content-selectbox">
-      {% for layer in layers.Pm__P3 %}
-        <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
-        <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
-      {% endfor %}
+        <input type="checkbox" id="layer-toggle" checked>
+        <label for="layer-toggle">Marcadores</label>
     </div>
+  
   </div>
 
 
@@ -85,7 +84,31 @@
   </div>
 
 
+
 <script>
+
+const markerDataList = [
+    { 
+        coords: [2.2945, 48.8584], 
+        name: 'Torre Eiffel', 
+        // URL de uma imagem JPG da Torre Eiffel
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/800px-Tour_Eiffel_Wikimedia_Commons.jpg' 
+    },
+    { 
+        coords: [2.3377, 48.8606], 
+        name: 'Museu do Louvre', 
+        // URL de uma imagem JPG do Louvre
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Louvre_Pyramid.jpg/640px-Louvre_Pyramid.jpg' 
+    },
+    { 
+        coords: [2.3522, 48.8566],
+        name: 'Catedral de Notre-Dame',
+        // URL de uma imagem JPG de Notre-Dame
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Notre-Dame_de_Paris_2013.JPG/640px-Notre-Dame_de_Paris_2013.JPG'
+    }
+];
+
+
 
 function toggleCollapsible(button) {
   const icon = button.querySelector('.icon');
