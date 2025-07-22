@@ -13,6 +13,10 @@ import { fromLonLat } from 'https://cdn.skypack.dev/ol/proj.js';
 import Style from 'https://cdn.skypack.dev/ol/style/Style.js';
 import Icon from 'https://cdn.skypack.dev/ol/style/Icon.js';
 import VectorLayer from 'https://cdn.skypack.dev/ol/layer/Vector.js';
+import GeoJSON from 'https://cdn.skypack.dev/ol/format/GeoJSON';
+import Stroke from 'https://cdn.skypack.dev/ol/style/Stroke';
+import Fill from 'https://cdn.skypack.dev/ol/style/Fill';
+import Overlay from 'https://cdn.skypack.dev/ol/Overlay';
 
 const appData = {
   url: "https://sistemas.itti.org.br/geoserver/MCR/wms",
@@ -87,11 +91,11 @@ wmslayercompleto,
 ];
 
 
-// const updateLegend = function (resolution) {
-//   const graphicUrl = wmsSource.getLegendUrl(resolution);
-//   const img = document.getElementById('legend');
-//   img.src = graphicUrl;
-// };
+const updateLegend = function (resolution) {
+  const graphicUrl = wmsSource.getLegendUrl(resolution);
+  const img = document.getElementById('legend');
+  img.src = graphicUrl;
+};
 
 
 const view = new View({
@@ -117,47 +121,66 @@ map.getView().on('change:resolution', function (event) {
 
 
 
-// map.on('singleclick', function (evt) {
-//   document.getElementById('info').innerHTML = '';
-//   const viewResolution = view.getResolution();
+map.on('singleclick', function (evt) {
+  document.getElementById('info').innerHTML = '';
+  const viewResolution = view.getResolution();
 
-//   // Para guardar as promessas de cada fetch
-//   const fetchPromises = [];
+  // Para guardar as promessas de cada fetch
+  const fetchPromises = [];
 
-//   wmsLayers.forEach((obj) => {
-//     const source = obj.layer.getSource();
-//     if (typeof source.getFeatureInfoUrl === 'function') {
-//       const url = source.getFeatureInfoUrl(
-//         evt.coordinate,
-//         viewResolution,
-//         'EPSG:3857',
-//         {'INFO_FORMAT': 'text/html'},
-//       );  
-//     if (url) {
-//       // Adiciona a promessa ao array
-//       fetchPromises.push(
-//         fetch(url)
-//           .then((response) => response.text())
-//           .then((html) => html)
-//       );
-//     }
-//     }
-//   });
+  wmsLayers.forEach((obj) => {
+    const source = obj.layer.getSource();
+    if (typeof source.getFeatureInfoUrl === 'function') {
+      const url = source.getFeatureInfoUrl(
+        evt.coordinate,
+        viewResolution,
+        'EPSG:3857',
+        {'INFO_FORMAT': 'text/html'},
+      );  
+    if (url) {
+      // Adiciona a promessa ao array
+      fetchPromises.push(
+        fetch(url)
+          .then((response) => response.text())
+          .then((html) => html)
+      );
+    }
+    }
+  });
 
-//   // Quando todas as requisições terminarem, mostra o resultado
-//   Promise.all(fetchPromises).then((results) => {
-//     // Junta todos os resultados em uma única string
-//     document.getElementById('info').innerHTML = results.join('<hr>');
-//   });
-// });
+  // Quando todas as requisições terminarem, mostra o resultado
+  Promise.all(fetchPromises).then((results) => {
+    // Junta todos os resultados em uma única string
+    document.getElementById('info').innerHTML = results.join('<hr>');
+  });
+});
+
 
 const wmsLayers = [];
+const leafletGEOJSONLayers = [];
+var camadaSelecionada = null;
+
+const estiloPadrao = new Style({
+  stroke: new Stroke({ color: 'blue', width: 2 }),
+  fill: new Fill({ color: 'rgba(0,0,255,0.1)' })
+});
+const estiloDestaque = new Style({
+  stroke: new Stroke({ color: 'red', width: 3 }),
+  fill: new Fill({ color: 'rgba(254, 0, 0, 1)' })
+});
 
 function removeLayerByName(name) {
   const index = wmsLayers.findIndex(item => item.name === name);
   if (index !== -1) {
     map.removeLayer(wmsLayers[index].layer);
     wmsLayers.splice(index, 1);
+  }
+  const index2 = leafletGEOJSONLayers.findIndex(item => item.name === name);
+  if (index2 !== -1) {
+    if (leafletGEOJSONLayers[index2].layer) {
+      map.removeLayer(leafletGEOJSONLayers[index2].layer);
+    }
+    leafletGEOJSONLayers.splice(index2, 1);
   }
 }
 
@@ -186,6 +209,14 @@ document.addEventListener('change', function(event) {
         name: event.target.value,
         layer: newwms,
       });
+
+const baseUrl = 'https://sistemas.itti.org.br/geoserver/MCR/ows';
+const typeName = event.target.value;
+const geoserverUrl = `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(typeName)}&outputFormat=application/json&srsName=EPSG:4326`;
+adicionarGeoJSONLayer(typeName,geoserverUrl,estiloPadrao,estiloDestaque, map);
+// Função para adicionar camada GeoJSON se ainda não existir
+
+
 
     }
 
@@ -222,3 +253,99 @@ map.on('click', function (e) {
         }
     });
 });
+
+
+const popupElement = document.getElementById('popup');
+const popupOverlay = new Overlay({
+  element: popupElement,
+  positioning: 'bottom-center',
+  stopEvent: false,
+  offset: [0, -20]
+});
+map.addOverlay(popupOverlay);
+
+
+function adicionarGeoJSONLayer(layerName, geoserverUrl, estiloPadrao, estiloDestaque, map) {
+  if (!leafletGEOJSONLayers.find(item => item.name === layerName)) {
+    fetch(geoserverUrl)
+      .then(response => response.json())
+      .then(data => {
+        if (!data || !data.features || data.features.length === 0) {
+          console.log("GeoJSON recebido, mas sem 'features'.");
+          map.getView().setCenter(ol.proj.fromLonLat([-47.92, -15.78]));
+          map.getView().setZoom(4);
+          return;
+        }
+
+        // Função de estilo dinâmica
+        const styleFunction = function(feature) {
+          // Se a feature está selecionada, aplica o estilo de destaque
+          if (camadaSelecionada && camadaSelecionada === feature) {
+            return estiloDestaque;
+          }
+          return estiloPadrao;
+       };
+
+        // Fonte vetorial
+        const vectorSource = new VectorSource({
+          features: new GeoJSON().readFeatures(data, {
+            featureProjection: 'EPSG:3857'
+          })
+        });
+
+        // Camada vetorial
+        const vectorLayer = new VectorLayer({
+          source: vectorSource,
+          style: styleFunction
+        });
+
+        vectorLayer.set('name', layerName); // Para facilitar busca/remover depois
+
+        // Evento de clique nas features
+        map.on('singleclick', function(evt) {
+          let featureFound = false;
+          map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+            if (layer === vectorLayer) {
+              featureFound = true;
+              // Atualiza seleção
+              camadaSelecionada = feature;
+              vectorLayer.changed(); // Força re-render para aplicar o estilo
+
+              // Monta popup
+              let popupContent = "";
+              const props = feature.getProperties();
+              let contador = 0;
+              for (const key in props) {
+                contador += 1;
+                if (
+                  key.toUpperCase() === "AREAM2" ||
+                  key === "Área__m2" ||
+                  key === "Área__m²" ||
+                  key === "Área_m2" ||
+                  key === "Área_m²"
+                ) {
+                  popupContent += `<b>Área:</b> ${props[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
+                } else {
+                  popupContent += `<b>${key}:</b> ${props[key]}<br>`;
+                }
+              }
+
+              // Exibe popup (usando overlay do OpenLayers)
+              popupOverlay.setPosition(evt.coordinate);
+              popupElement.innerHTML = popupContent;
+            }
+          });
+          // Se clicou fora de qualquer feature, remove seleção
+          if (!featureFound) {
+            camadaSelecionada = null;
+            vectorLayer.changed();
+            popupOverlay.setPosition(undefined);
+          }
+        });
+
+        // Adiciona camada ao mapa e ao array de controle
+        map.addLayer(vectorLayer);
+        leafletGEOJSONLayers.push({ name: layerName, layer: vectorLayer });
+      });
+  }
+}

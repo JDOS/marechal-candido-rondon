@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sistema de Login{% endblock %}</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
         body { font-family: sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
         .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
@@ -15,9 +17,32 @@
         a { color: #007bff; }
         input[type="text"], input[type="password"] { width: 95%; padding: 10px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #ddd; }
         input[type="submit"] { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; vertical-align: middle; }
+        th { background-color: #f2f2f2; }
+        img { max-width: 150px; height: auto; display: block; }
+        .nav { text-align: center; margin-bottom: 20px; }
+        .nav a { padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; }
+        .nav a:hover { background-color: #0056b3; }
+        .actions a, .actions button { padding: 5px 10px; text-decoration: none; border-radius: 4px; color: white; border: none; cursor: pointer; }
+        .actions .edit-btn { background-color: #ffc107; }
+        .actions .delete-btn { background-color: #dc3545; }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <img src="{{ url_for('static', filename='img/brasaomcr.png') }}" alt="Brasão" class="logo">
+
+        <div class="navbar-title">Marechal Cândido Rondon</div>
+
+        <div class="navbar-links">
+            <!-- <a href="#">VISÃO 360º <sup  class="em-breve">(Em breve!)</sup></a> -->
+            <a href="{{ url_for('home') }}">TOPOGRAFIA</a>
+            <a href="{{ url_for('upload_imagens') }}">ADMIN</a>
+        </div>
+
+    </div>
+
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}

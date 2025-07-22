@@ -9,69 +9,46 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from owslib.wms import WebMapService
 
+#Pega os dados para conexão com GEOSERVER ITTI
 load_dotenv()
 username = os.getenv("user")
 password = os.getenv("password")
 
+#Links de conexão
 
 geoserver_url = "https://sistemas.itti.org.br/geoserver/rest/layers"
 geoserver_wms="https://sistemas.itti.org.br/geoserver/MCR/wms"
-
+WORKSPACE = "MCR"
 
 
 params = {
     "outputFormat": "application/html"
 }
 
-response = requests.get(geoserver_url, params = params, auth=HTTPBasicAuth(username, password))
 
-if response.status_code == 200:
-    dados = response.json()
-    all_layers = dados['layers']['layer'];
-    layers = []
-
-    for layer in all_layers:
-        if("MCR" in layer["name"]):
-            layers.append(layer)
-    layers_dsm = []
-    layers_ortofoto = []
-    layers_geral = []
-    for layer in layers:
-        if("Ortofoto" in layer["name"]):
-            layers_ortofoto.append(layer)
-
-        if("DSM" in layer["name"]):
-            layers_dsm.append(layer)
- 
-    for layer in layers:
-        if(layer not in layers_dsm):
-            if(layer not in layers_ortofoto):
-                layers_geral.append(layer)
-
-else:
-    print("Erro:", response.status_code)
-
-
+'''Busca por uma lista de Grupos Layers que contenha sublayers Ex. ['nomegrupolayer']=['sublayer1','sublayer2']'''
 def getlayers():
-    WORKSPACE = "MCR"
-    wms = WebMapService("https://sistemas.itti.org.br/geoserver/MCR/ows?service=WMS&version=1.1.1&request=GetCapabilities")
-    list_produts = {}
-    for name in wms.contents:
-        layer = wms[name]
-        if hasattr(layer, 'children') and layer.children:
-            nomelayer=str(name).replace(" ","_")
-            nomelayer=nomelayer.replace("-", "")
-            list_produts[nomelayer]=[]
-            for sub in layer.children:
-                name=WORKSPACE+":"+sub.name
-                tupla=(name,sub.title)
-                list_produts[nomelayer].append(tupla)
-    return list_produts
+    try:
+        wms = WebMapService("https://sistemas.itti.org.br/geoserver/MCR/ows?service=WMS&version=1.1.1&request=GetCapabilities")
+        list_produts = {}
+        for name in wms.contents:
+            layer = wms[name]
+            if hasattr(layer, 'children') and layer.children:
+                nomelayer=str(name).replace(" ","_")
+                nomelayer=nomelayer.replace("-", "")
+                list_produts[nomelayer]=[]
+                for sub in layer.children:
+                    name=WORKSPACE+":"+sub.name
+                    tupla=(name,sub.title)
+                    list_produts[nomelayer].append(tupla)
+        return list_produts
+    
+    except Exception as e:
+        print("Erro de conexão ao servidor geoserver: ",e)
 
-#layersmult = getlayers()
+
 
 app = Flask(__name__)
-
 
 
 # Configuração da pasta de uploads
@@ -86,6 +63,7 @@ db = SQLAlchemy(app)
 
 
 # --- Modelo do Banco de Dados ---
+
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -94,12 +72,11 @@ class Usuario(db.Model):
     def __repr__(self):
         return f'<Usuario {self.username}>'
 
-# Define a estrutura da nossa tabela 'imagens'
 class Imagem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(100), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
-    longitude = db.Column(db.Float, nullable=False) # Usei 'longitude' como é o padrão
+    longitude = db.Column(db.Float, nullable=False) 
 
     def __repr__(self):
         return f'<Imagem {self.filename}>'
@@ -158,12 +135,16 @@ def protegido():
 def logout():
     session.pop('usuario_id', None)
     session.pop('username', None)
-    flash('Você saiu da sua conta.', 'success')
+    flash('Logoff..', 'success')
     return redirect(url_for('login'))
 
 
 @app.route('/img', methods=['GET', 'POST'])
 def upload_imagens():
+    if 'usuario_id' not in session:
+        flash('Você precisa fazer login para acessar esta página.', 'info')
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
         # Verifica se a requisição tem a parte de arquivos
         if 'imagens' not in request.files:
@@ -218,6 +199,9 @@ def sucesso():
 
 @app.route('/lista')
 def listar_imagens():
+    if 'usuario_id' not in session:
+        flash('Você precisa fazer login para acessar esta página.', 'info')
+        return redirect(url_for('login'))
     # Busca todas as imagens no banco de dados, ordenadas pelo ID mais recente
     imagens_db = Imagem.query.order_by(Imagem.id.desc()).all()
     return render_template('lista.html', imagens=imagens_db)
@@ -284,6 +268,16 @@ def init_db_command():
     """Cria as tabelas do banco de dados."""
     db.create_all()
     print("Banco de dados inicializado com sucesso.")
+
+@app.cli.command("superuser-db")
+def init_db_command():
+    """ADD Superuser"""
+    hashed_password = generate_password_hash('102131')
+    novo_usuario = Usuario(username='admin', password_hash=hashed_password)
+    
+    db.session.add(novo_usuario)
+    db.session.commit()
+    print("Usuário adicionado com sucesso.")
 
 @app.route('/acesso')
 def index():
