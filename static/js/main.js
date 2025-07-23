@@ -63,13 +63,11 @@ const vectorLayer = new VectorLayer({ // Usa VectorLayer importado
 
 vectorLayer.setZIndex(100);
 
-// Pega o elemento checkbox do HTML pelo seu ID
+
 const layerToggleCheckbox = document.getElementById('layer-toggle');
 
-// Adiciona um "ouvinte" para o evento 'change' (quando o estado do checkbox muda)
+
 layerToggleCheckbox.addEventListener('change', function() {
-    // A propriedade 'this.checked' será 'true' se estiver marcado, e 'false' se não.
-    // O método setVisible() da camada aceita exatamente esses valores booleanos.
     vectorLayer.setVisible(this.checked);
 });
 
@@ -121,39 +119,39 @@ map.getView().on('change:resolution', function (event) {
 
 
 
-map.on('singleclick', function (evt) {
-  document.getElementById('info').innerHTML = '';
-  const viewResolution = view.getResolution();
+// map.on('singleclick', function (evt) {
+//   document.getElementById('info').innerHTML = '';
+//   const viewResolution = view.getResolution();
 
-  // Para guardar as promessas de cada fetch
-  const fetchPromises = [];
+//   // Para guardar as promessas de cada fetch
+//   const fetchPromises = [];
 
-  wmsLayers.forEach((obj) => {
-    const source = obj.layer.getSource();
-    if (typeof source.getFeatureInfoUrl === 'function') {
-      const url = source.getFeatureInfoUrl(
-        evt.coordinate,
-        viewResolution,
-        'EPSG:3857',
-        {'INFO_FORMAT': 'text/html'},
-      );  
-    if (url) {
-      // Adiciona a promessa ao array
-      fetchPromises.push(
-        fetch(url)
-          .then((response) => response.text())
-          .then((html) => html)
-      );
-    }
-    }
-  });
+//   wmsLayers.forEach((obj) => {
+//     const source = obj.layer.getSource();
+//     if (typeof source.getFeatureInfoUrl === 'function') {
+//       const url = source.getFeatureInfoUrl(
+//         evt.coordinate,
+//         viewResolution,
+//         'EPSG:3857',
+//         {'INFO_FORMAT': 'text/html'},
+//       );  
+//     if (url) {
+//       // Adiciona a promessa ao array
+//       fetchPromises.push(
+//         fetch(url)
+//           .then((response) => response.text())
+//           .then((html) => html)
+//       );
+//     }
+//     }
+//   });
 
-  // Quando todas as requisições terminarem, mostra o resultado
-  Promise.all(fetchPromises).then((results) => {
-    // Junta todos os resultados em uma única string
-    document.getElementById('info').innerHTML = results.join('<hr>');
-  });
-});
+//   // Quando todas as requisições terminarem, mostra o resultado
+//   Promise.all(fetchPromises).then((results) => {
+//     // Junta todos os resultados em uma única string
+//     document.getElementById('info').innerHTML = results.join('<hr>');
+//   });
+// });
 
 
 const wmsLayers = [];
@@ -161,12 +159,12 @@ const leafletGEOJSONLayers = [];
 var camadaSelecionada = null;
 
 const estiloPadrao = new Style({
-  stroke: new Stroke({ color: 'blue', width: 2 }),
-  fill: new Fill({ color: 'rgba(0,0,255,0.1)' })
+  stroke: new Stroke({ color: 'black', width: 1 }),
+  fill: new Fill({ color: 'rgba(54, 54, 255, 0)' })
 });
 const estiloDestaque = new Style({
-  stroke: new Stroke({ color: 'red', width: 3 }),
-  fill: new Fill({ color: 'rgba(254, 0, 0, 1)' })
+  stroke: new Stroke({ color: 'rgba(0, 168, 39, 1)', width: 2 }),
+  fill: new Fill({ color: 'rgba(0, 168, 39, 0.45)' })
 });
 
 function removeLayerByName(name) {
@@ -313,21 +311,54 @@ function adicionarGeoJSONLayer(layerName, geoserverUrl, estiloPadrao, estiloDest
 
               // Monta popup
               let popupContent = "";
+              popupContent = "<h4>"+layerName+"</h4>"
               const props = feature.getProperties();
               let contador = 0;
               for (const key in props) {
                 contador += 1;
                 if (
-                  key.toUpperCase() === "AREAM2" ||
-                  key === "Área__m2" ||
+                  key.toUpperCase() === "SHAPE_AREA" ||
                   key === "Área__m²" ||
                   key === "Área_m2" ||
                   key === "Área_m²"
                 ) {
                   popupContent += `<b>Área:</b> ${props[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
-                } else {
-                  popupContent += `<b>${key}:</b> ${props[key]}<br>`;
+                } 
+                else if (key=="geometry" || key=="CLASSE" || key.toUpperCase()=="NOME_QTDES" || key=="id"){
+                 //pass
                 }
+                else if (key == "Área_ha"){
+                   popupContent += `<b>Área:</b> ${props[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha<br>`;
+                }
+                else if (key== "NmDistrito" || key =="CdMunicipi" || key=="CdRegiaoMe" || key=="AreaMetros"){
+                   popupContent += `<b>${key}:</b> ${props[key]}<br>`;
+                }
+                else if (key=="area_km2"){
+                  popupContent += `<b>Área:</b> ${props[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} km²<br>`;
+                }
+                else if (key=="NmCompleto"){
+                  popupContent += `<b>Nome:</b> ${props[key]}<br>`;
+                }
+                else if (key=="municipio"){
+                  popupContent += `<b>Município:</b> ${props[key]}<br>`;
+                }
+                else if (key=="Shape_Leng"){
+                  popupContent += `<b>Comprimento de Shape:</b> ${props[key].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²<br>`;
+                }
+                else if (key=="codibge"){
+                  popupContent += `<b>Código IBGE:</b> ${props[key]}<br>`;
+                }
+                else if  (props[key]!=0) {
+                    popupContent += `<b>${key}:</b> ${props[key]}<br>`;
+                }
+
+      
+                else if  (key!=null || key != '' || key!='null' ||props[key]==0||props[key]=="0") {
+                    
+                }
+                 else {
+                   popupContent += `<b>${key}:</b> ${props[key]}<br>`;
+                 }
               }
 
               // Exibe popup (usando overlay do OpenLayers)

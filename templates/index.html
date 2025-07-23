@@ -11,7 +11,15 @@
 
 </head>
     <style>
-
+#popup {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 0.8em;
+  
+}
     </style>
 <body>
 
@@ -21,7 +29,7 @@
   <div class="navbar-links">
     <!-- <a href="#">VISÃO 360º <sup  class="em-breve">(Em breve!)</sup></a> -->
     <a href="#">TOPOGRAFIA</a>
-    <a href="{{ url_for('listar_imagens') }}">ADMIN</a>
+    <!-- <a href="{{ url_for('listar_imagens') }}">ADMIN</a> -->
   </div>
 </div>
     <!-- Painel lateral -->
@@ -69,7 +77,7 @@
         Visão 360º
     </button>
     <div class="content-selectbox">
-        <input type="checkbox" id="layer-toggle" checked>
+        <input type="checkbox" id="layer-toggle">
         <label for="layer-toggle">Marcadores</label>
     </div>
   
@@ -78,12 +86,14 @@
 
   <div id="map" class="map"></div>
 
-  <div class="infobloco">
-        <h2>Legenda</h2>
+  <div id="popup" class="ol-popup">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
+
+  <!-- <div class="infobloco">
+        <h2>Legenda</h2> 
             <div><img id="legend"/></div>
-            <div id="popup" class="ol-popup"></div>
-                <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
-                  </div>
+     
+               <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div> 
+</div> -->
                   
 
 
