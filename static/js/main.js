@@ -60,7 +60,7 @@ const vectorSource = new VectorSource({ // Usa VectorSource importado
 const vectorLayer = new VectorLayer({ // Usa VectorLayer importado
     source: vectorSource,
 });
-
+vectorLayer.setVisible(false);
 vectorLayer.setZIndex(100);
 
 
@@ -114,7 +114,7 @@ const resolution = map.getView().getResolution();
 
 map.getView().on('change:resolution', function (event) {
   const resolution = event.target.getResolution();
- // updateLegend(resolution);
+  updateLegend(resolution);
 });
 
 
@@ -186,6 +186,7 @@ document.addEventListener('change', function(event) {
     if (event.target.type === 'checkbox') {
       if (event.target.checked === true) {
           console.log('Valor:', event.target.value);
+          let eventcheck=event.target;
 
          const newwms = new TileLayer({
                           source: new TileWMS({
@@ -211,7 +212,7 @@ document.addEventListener('change', function(event) {
 const baseUrl = 'https://sistemas.itti.org.br/geoserver/MCR/ows';
 const typeName = event.target.value;
 const geoserverUrl = `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(typeName)}&outputFormat=application/json&srsName=EPSG:4326`;
-adicionarGeoJSONLayer(typeName,geoserverUrl,estiloPadrao,estiloDestaque, map);
+adicionarGeoJSONLayer(typeName,geoserverUrl,estiloPadrao,estiloDestaque,map,eventcheck);
 // Função para adicionar camada GeoJSON se ainda não existir
 
 
@@ -263,7 +264,7 @@ const popupOverlay = new Overlay({
 map.addOverlay(popupOverlay);
 
 
-function adicionarGeoJSONLayer(layerName, geoserverUrl, estiloPadrao, estiloDestaque, map) {
+function adicionarGeoJSONLayer(layerName, geoserverUrl, estiloPadrao, estiloDestaque, map,eventcheck) {
   if (!leafletGEOJSONLayers.find(item => item.name === layerName)) {
     fetch(geoserverUrl)
       .then(response => response.json())
@@ -375,8 +376,12 @@ function adicionarGeoJSONLayer(layerName, geoserverUrl, estiloPadrao, estiloDest
         });
 
         // Adiciona camada ao mapa e ao array de controle
-        map.addLayer(vectorLayer);
-        leafletGEOJSONLayers.push({ name: layerName, layer: vectorLayer });
+        if(eventcheck.checked === true){
+            map.addLayer(vectorLayer);
+            leafletGEOJSONLayers.push({ name: layerName, layer: vectorLayer });
+        }
+        
+       
       });
   }
 }
