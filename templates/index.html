@@ -20,6 +20,12 @@
   font-size: 0.8em;
   
 }
+
+#download {
+  height: 15px;
+  width: 15px;
+  padding-left: 10px;
+}
     </style>
 <body>
 
@@ -44,7 +50,7 @@
     <div class="content-selectbox">
       {% for layer in layers.MCR__Geral %}
         <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
-        <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
+        <label for="{{layer.1 }}"> {{layer.1 }}<a href="https://sistemas.itti.org.br/geoserver/MCR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName={{layer.0}}&maxFeatures=50&outputFormat=SHAPE-ZIP"><img src="{{ url_for('static', filename='img/download.png') }}"  alt="Download" id="download" > </a> </label><br>
       {% endfor %}
     </div>
 
@@ -77,8 +83,8 @@
         Visão 360º
     </button>
     <div class="content-selectbox">
-        <input type="checkbox" id="layer-toggle">
-        <label for="layer-toggle">Marcadores</label>
+        <input type="checkbox" id="layer-360">
+        <label for="layer-360">Marcadores</label>
     </div>
   
   </div>
@@ -88,12 +94,12 @@
 
   <div id="popup" class="ol-popup">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
 
-   <!-- <div class="infobloco">
+    <div class="infobloco">
         <h2>Legenda</h2> 
             <div><img id="legend"/></div>
      
                <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div> 
-</div>  -->
+</div>  
                   
 
 

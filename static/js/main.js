@@ -20,7 +20,7 @@ import Overlay from 'https://cdn.skypack.dev/ol/Overlay';
 
 const appData = {
   url: "https://sistemas.itti.org.br/geoserver/MCR/wms",
-  layer: "MCR:Perímetro urbano",
+  layer: "MCR:Zoneamento sede",
 };
 
 const wmsSource = new ImageWMS({
@@ -64,32 +64,34 @@ vectorLayer.setVisible(false);
 vectorLayer.setZIndex(100);
 
 
-const layerToggleCheckbox = document.getElementById('layer-toggle');
+const layerToggleCheckbox = document.getElementById('layer-360');
 
 
 layerToggleCheckbox.addEventListener('change', function() {
     vectorLayer.setVisible(this.checked);
 });
 
-const wmslayercompleto =   new ImageLayer({
-    extent: [-13884991, 2870341, -7455066, 6338219],
-    source: wmsSource,
-  });
+// const wmslayercompleto =   new ImageLayer({
+//     extent: [-13884991, 2870341, -7455066, 6338219],
+//     source: wmsSource,
+//   });
 
-wmslayercompleto.setZIndex(100);
+//wmslayercompleto.setZIndex(100);
 
  const layers = [
  new TileLayer({
     source: new OSM(),
   }),
 
-wmslayercompleto,
+// wmslayercompleto,
 
   vectorLayer,
 ];
 
 
 const updateLegend = function (resolution) {
+  //let ultimoItem = wmsLayers[wmsLayers.length - 1];
+  //const graphicUrl = ultimoItem.layer.getLegendUrl(resolution);
   const graphicUrl = wmsSource.getLegendUrl(resolution);
   const img = document.getElementById('legend');
   img.src = graphicUrl;
@@ -108,7 +110,7 @@ const map = new Map({
 });
 
 
-const resolution = map.getView().getResolution();
+//const resolution = map.getView().getResolution();
 //updateLegend(resolution);
 
 
@@ -119,39 +121,39 @@ map.getView().on('change:resolution', function (event) {
 
 
 
-// map.on('singleclick', function (evt) {
-//   document.getElementById('info').innerHTML = '';
-//   const viewResolution = view.getResolution();
+map.on('singleclick', function (evt) {
+  document.getElementById('info').innerHTML = '';
+  const viewResolution = view.getResolution();
 
-//   // Para guardar as promessas de cada fetch
-//   const fetchPromises = [];
+  // Para guardar as promessas de cada fetch
+  const fetchPromises = [];
 
-//   wmsLayers.forEach((obj) => {
-//     const source = obj.layer.getSource();
-//     if (typeof source.getFeatureInfoUrl === 'function') {
-//       const url = source.getFeatureInfoUrl(
-//         evt.coordinate,
-//         viewResolution,
-//         'EPSG:3857',
-//         {'INFO_FORMAT': 'text/html'},
-//       );  
-//     if (url) {
-//       // Adiciona a promessa ao array
-//       fetchPromises.push(
-//         fetch(url)
-//           .then((response) => response.text())
-//           .then((html) => html)
-//       );
-//     }
-//     }
-//   });
+  wmsLayers.forEach((obj) => {
+    const source = obj.layer.getSource();
+    if (typeof source.getFeatureInfoUrl === 'function') {
+      const url = source.getFeatureInfoUrl(
+        evt.coordinate,
+        viewResolution,
+        'EPSG:3857',
+        {'INFO_FORMAT': 'text/html'},
+      );  
+    if (url) {
+      // Adiciona a promessa ao array
+      fetchPromises.push(
+        fetch(url)
+          .then((response) => response.text())
+          .then((html) => html)
+      );
+    }
+    }
+  });
 
-//   // Quando todas as requisições terminarem, mostra o resultado
-//   Promise.all(fetchPromises).then((results) => {
-//     // Junta todos os resultados em uma única string
-//     document.getElementById('info').innerHTML = results.join('<hr>');
-//   });
-// });
+  // Quando todas as requisições terminarem, mostra o resultado
+  Promise.all(fetchPromises).then((results) => {
+    // Junta todos os resultados em uma única string
+    document.getElementById('info').innerHTML = results.join('<hr>');
+  });
+});
 
 
 const wmsLayers = [];
@@ -208,6 +210,9 @@ document.addEventListener('change', function(event) {
         name: event.target.value,
         layer: newwms,
       });
+
+      const resolution = map.getView().getResolution();
+      updateLegend(resolution);
 
 const baseUrl = 'https://sistemas.itti.org.br/geoserver/MCR/ows';
 const typeName = event.target.value;

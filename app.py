@@ -289,6 +289,7 @@ def index():
 # Rota principal
 @app.route('/')
 def home():
+    
     layersmult = getlayers()
     imagens_db = Imagem.query.order_by(Imagem.id.desc()).all()
     return render_template("index.html",layers=layersmult,url=geoserver_wms,imagens=imagens_db)
