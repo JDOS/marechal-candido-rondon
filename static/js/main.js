@@ -21,7 +21,7 @@ import Overlay from 'https://cdn.skypack.dev/ol/Overlay';
 
 const appData = {
   url: "https://sistemas.itti.org.br/geoserver/MCR/wms",
-  layer: "MCR:Zoneamento sede",
+  layer: "MCR:DISTRITOS_PMMCR_2025",
 };
 
 const wmsSource = new ImageWMS({
@@ -103,7 +103,6 @@ const updateLegend = function (resolution) {
 const view = new View({
   center:[-6028321.415827398, -2821710.356142848],
   zoom: 12,
-  maxZoom:25,
 });
 
 const map = new Map({
@@ -164,12 +163,12 @@ document.addEventListener('change', function(event) {
                             params: {
                               'LAYERS': event.target.value, 
                               'TILED': true,
-                              'FORMAT': 'image/png8'
+                              'FORMAT': 'image/png'
                             },
                                serverType: 'geoserver',
                               transition: 0,
                              crossOrigin: 'anonymous',
-                          }),
+                          })
 
       });
 
