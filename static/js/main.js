@@ -18,6 +18,11 @@ import Stroke from 'https://cdn.skypack.dev/ol/style/Stroke';
 import Fill from 'https://cdn.skypack.dev/ol/style/Fill';
 import Overlay from 'https://cdn.skypack.dev/ol/Overlay';
 
+import {defaults as defaultControls} from 'https://cdn.skypack.dev/ol/control.js';
+import {defaults as defaultInteractions} from 'https://cdn.skypack.dev/ol/interaction.js';
+import MouseWheelZoom from 'https://cdn.skypack.dev/ol/interaction/MouseWheelZoom.js';
+import Zoom from 'https://cdn.skypack.dev/ol/control/Zoom.js';
+
 const appData = {
   url: "https://sistemas.itti.org.br/geoserver/MCR/wms",
   layer: "MCR:Zoneamento sede",
@@ -90,11 +95,12 @@ layerToggleCheckbox.addEventListener('change', function() {
 
 
 const updateLegend = function (resolution) {
-  //let ultimoItem = wmsLayers[wmsLayers.length - 1];
-  //const graphicUrl = ultimoItem.layer.getLegendUrl(resolution);
-  const graphicUrl = wmsSource.getLegendUrl(resolution);
+  wmsLayers.forEach((obj) => {
+  const source = obj.layer.getSource();
+  const graphicUrl = source.getLegendUrl(resolution);
   const img = document.getElementById('legend');
   img.src = graphicUrl;
+  });
 };
 
 
@@ -107,6 +113,8 @@ const map = new Map({
   layers: layers,
   target: 'map',
   view: view,
+  controls: defaultControls(),
+
 });
 
 
@@ -114,46 +122,11 @@ const map = new Map({
 //updateLegend(resolution);
 
 
-map.getView().on('change:resolution', function (event) {
-  const resolution = event.target.getResolution();
-  updateLegend(resolution);
-});
+// map.getView().on('change:resolution', function (event) {
+//   const resolution = event.target.getResolution();
+//   updateLegend(resolution);
+// });
 
-
-
-map.on('singleclick', function (evt) {
-  document.getElementById('info').innerHTML = '';
-  const viewResolution = view.getResolution();
-
-  // Para guardar as promessas de cada fetch
-  const fetchPromises = [];
-
-  wmsLayers.forEach((obj) => {
-    const source = obj.layer.getSource();
-    if (typeof source.getFeatureInfoUrl === 'function') {
-      const url = source.getFeatureInfoUrl(
-        evt.coordinate,
-        viewResolution,
-        'EPSG:3857',
-        {'INFO_FORMAT': 'text/html'},
-      );  
-    if (url) {
-      // Adiciona a promessa ao array
-      fetchPromises.push(
-        fetch(url)
-          .then((response) => response.text())
-          .then((html) => html)
-      );
-    }
-    }
-  });
-
-  // Quando todas as requisições terminarem, mostra o resultado
-  Promise.all(fetchPromises).then((results) => {
-    // Junta todos os resultados em uma única string
-    document.getElementById('info').innerHTML = results.join('<hr>');
-  });
-});
 
 
 const wmsLayers = [];
@@ -201,7 +174,12 @@ document.addEventListener('change', function(event) {
                                serverType: 'geoserver',
                               transition: 0,
                              crossOrigin: 'anonymous',
-                          })
+                             cacheSize: 2048, // Aumenta o cache
+                              reprojectionErrorThreshold: 0.5, // Reduz precisão de reprojeção
+                             
+                          }),
+                          renderBuffer: 100,
+                          preload: 1,
       });
 
       map.addLayer(newwms);
@@ -211,8 +189,8 @@ document.addEventListener('change', function(event) {
         layer: newwms,
       });
 
-      const resolution = map.getView().getResolution();
-      updateLegend(resolution);
+  //    const resolution = map.getView().getResolution();
+  //    updateLegend(resolution);
 
 const baseUrl = 'https://sistemas.itti.org.br/geoserver/MCR/ows';
 const typeName = event.target.value;
