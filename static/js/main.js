@@ -18,10 +18,6 @@ import Stroke from 'https://cdn.skypack.dev/ol/style/Stroke';
 import Fill from 'https://cdn.skypack.dev/ol/style/Fill';
 import Overlay from 'https://cdn.skypack.dev/ol/Overlay';
 
-import {defaults as defaultControls} from 'https://cdn.skypack.dev/ol/control.js';
-import {defaults as defaultInteractions} from 'https://cdn.skypack.dev/ol/interaction.js';
-import MouseWheelZoom from 'https://cdn.skypack.dev/ol/interaction/MouseWheelZoom.js';
-import Zoom from 'https://cdn.skypack.dev/ol/control/Zoom.js';
 
 const appData = {
   url: "https://sistemas.itti.org.br/geoserver/MCR/wms",
@@ -107,14 +103,13 @@ const updateLegend = function (resolution) {
 const view = new View({
   center:[-6028321.415827398, -2821710.356142848],
   zoom: 12,
+  maxZoom:25,
 });
 
 const map = new Map({
   layers: layers,
   target: 'map',
   view: view,
-  controls: defaultControls(),
-
 });
 
 
@@ -174,12 +169,8 @@ document.addEventListener('change', function(event) {
                                serverType: 'geoserver',
                               transition: 0,
                              crossOrigin: 'anonymous',
-                             cacheSize: 2048, // Aumenta o cache
-                              reprojectionErrorThreshold: 0.5, // Reduz precisão de reprojeção
-                             
                           }),
-                          renderBuffer: 100,
-                          preload: 1,
+
       });
 
       map.addLayer(newwms);
