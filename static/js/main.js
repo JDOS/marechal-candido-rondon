@@ -164,7 +164,7 @@ document.addEventListener('change', function(event) {
                               'LAYERS': event.target.value, 
                               'TILED': true,
                               'FORMAT': 'image/png8',
-                              'tileSize': 512,
+                              'tileSize': [512,512],
                               '_dc': Date.now() // Parâmetro dinâmico para evitar cache
                             },
                                serverType: 'geoserver',
