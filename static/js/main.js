@@ -163,7 +163,8 @@ document.addEventListener('change', function(event) {
                             params: {
                               'LAYERS': event.target.value, 
                               'TILED': true,
-                              'FORMAT': 'image/png8'
+                              'FORMAT': 'image/png8',
+                              '_dc': Date.now() // Parâmetro dinâmico para evitar cache
                             },
                                serverType: 'geoserver',
                               transition: 0,
