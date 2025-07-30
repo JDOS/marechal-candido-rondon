@@ -304,7 +304,6 @@ def coordenadas():
 def animacao(filename):
 
     image=filename
-    print(image)
     return render_template('animacao.html', image=image)
 
 
