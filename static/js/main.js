@@ -188,7 +188,7 @@ document.addEventListener('change', function (event) {
       const baseUrl = 'https://sistemas.itti.org.br/geoserver/MCR/ows';
       const typeName = event.target.value;
       const geoserverUrl = `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(typeName)}&outputFormat=application/json&srsName=EPSG:4326`;
-     // adicionarGeoJSONLayer(typeName, geoserverUrl, estiloPadrao, estiloDestaque, map, eventcheck);
+      adicionarGeoJSONLayer(typeName, geoserverUrl, estiloPadrao, estiloDestaque, map, eventcheck);
     }
 
     if (event.target.checked === false) {
