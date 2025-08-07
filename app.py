@@ -16,8 +16,12 @@ password = os.getenv("password")
 
 #Links de conexão
 
-geoserver_url = "https://sistemas.itti.org.br/geoserver/rest/layers"
-geoserver_wms="https://sistemas.itti.org.br/geoserver/MCR/wms"
+#geoserver_url = "https://sistemas.itti.org.br/geoserver/rest/layers"
+#geoserver_wms="https://sistemas.itti.org.br/geoserver/MCR/wms"
+
+geoserver_url = "https://mcr.planejamentourbano.com/geoserver/rest/layers"
+geoserver_wms="https://mcr.planejamentourbano.com/geoserver/MCR/wms"
+
 WORKSPACE = "MCR"
 
 
@@ -29,7 +33,7 @@ params = {
 '''Busca por uma lista de Grupos Layers que contenha sublayers Ex. ['nomegrupolayer']=['sublayer1','sublayer2']'''
 def getlayers():
     try:
-        wms = WebMapService("https://sistemas.itti.org.br/geoserver/MCR/ows?service=WMS&version=1.1.1&request=GetCapabilities")
+        wms = WebMapService("https://mcr.planejamentourbano.com/geoserver/MCR/ows?service=WMS&version=1.1.1&request=GetCapabilities")
         list_produts = {}
         for name in wms.contents:
             layer = wms[name]

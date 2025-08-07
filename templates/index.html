@@ -51,7 +51,7 @@
       {% for layer in layers.MCR__Geral %}
         <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
         <label for="{{layer.1 }}"> {{layer.1 }}
-     <a href="https://sistemas.itti.org.br/geoserver/MCR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName={{layer.0}}&maxFeatures=50&outputFormat=SHAPE-ZIP" target="_blank"><img src="{{ url_for('static', filename='img/download.png') }}"  alt="Download" id="download" > </a> </label><br> {% endfor %}
+     <a href="https://mcr.planejamentourbano.com/geoserver/MCR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName={{layer.0}}&maxFeatures=50&outputFormat=SHAPE-ZIP" target="_blank"><img src="{{ url_for('static', filename='img/download.png') }}"  alt="Download" id="download" > </a> </label><br> {% endfor %}
     </div>
 
 
