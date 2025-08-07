@@ -20,7 +20,7 @@ import Overlay from 'https://cdn.skypack.dev/ol/Overlay';
 
 
 const appData = {
-  url: "https://sistemas.itti.org.br/geoserver/MCR/wms",
+  url: "https://mcr.planejamentourbano.com/geoserver/MCR/wms",
   layer: "MCR:DISTRITOS_PMMCR_2025",
 };
 
@@ -184,7 +184,7 @@ document.addEventListener('change', function(event) {
   //    const resolution = map.getView().getResolution();
   //    updateLegend(resolution);
 
-const baseUrl = 'https://sistemas.itti.org.br/geoserver/MCR/ows';
+const baseUrl = 'https://mcr.planejamentourbano.com/geoserver/MCR/ows';
 const typeName = event.target.value;
 const geoserverUrl = `${baseUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=${encodeURIComponent(typeName)}&outputFormat=application/json&srsName=EPSG:4326`;
 adicionarGeoJSONLayer(typeName,geoserverUrl,estiloPadrao,estiloDestaque,map,eventcheck);
