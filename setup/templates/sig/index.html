@@ -1,0 +1,150 @@
+{% load static %}
+{% load absolute_url %}
+{% load l10n %}
+
+<!DOCTYPE html>
+
+<head>
+
+    <title>Marechal Candido Rondon - Topografia </title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css" />
+    <link rel="stylesheet" href="{% static '/styles/style.css' %}">
+    <script type="module" src="{% static '/js/main.js' %}"></script>
+    
+
+</head>
+    <style>
+#popup {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 0.8em;
+  
+}
+
+#download {
+  height: 15px;
+  width: 15px;
+  padding-left: 10px;
+}
+    </style>
+<body>
+
+<div class="navbar">
+  <img src="{% static '/assets/icones/brasaomcr.png' %}" alt="Brasão" class="logo">
+  <div class="navbar-title">Marechal Cândido Rondon</div>
+  <div class="navbar-links">
+    <!-- <a href="#">VISÃO 360º <sup  class="em-breve">(Em breve!)</sup></a> -->
+    <a href="#">TOPOGRAFIA</a>
+  
+  </div>
+</div>
+    <!-- Painel lateral -->
+  <div class="sidebar">
+    <h2>Camadas</h2>
+
+
+    <button class="collapsible" onclick="toggleCollapsible(this)">
+      <span class="icon">+</span>
+        Geral
+    </button>
+    <div class="content-selectbox">
+      {% for layer in layers.MCR__Geral %}
+        <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
+        <label for="{{layer.1 }}"> {{layer.1 }}
+     <a href="https://mcr.planejamentourbano.com/geoserver/MCR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName={{layer.0}}&maxFeatures=50&outputFormat=SHAPE-ZIP" target="_blank"><img src="{% static '/assets/icones/download.png' %}"  alt="Download" id="download" > </a> </label><br> {% endfor %}
+    </div>
+
+
+    <button class="collapsible" onclick="toggleCollapsible(this)">
+      <span class="icon">+</span>
+        DSM
+    </button>
+    <div class="content-selectbox">
+      {% for layer in layers.MCR__MDS %}
+        <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
+        <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
+      {% endfor %}
+    </div>
+
+    
+    <button class="collapsible" onclick="toggleCollapsible(this)">
+      <span class="icon">+</span>
+        Ortofotos
+    </button>
+    <div class="content-selectbox">
+      {% for layer in layers.MCR__Ortofoto %}
+        <input type="checkbox" id=" {{layer.1 }}" name="{{layer.0}}" value="{{layer.0}}">
+        <label for="{{layer.1 }}"> {{layer.1 }}</label><br>
+      {% endfor %}
+    </div>
+
+    <button class="collapsible" onclick="toggleCollapsible(this)">
+      <span class="icon">+</span>
+        Visão 360º
+    </button>
+    <div class="content-selectbox">
+        <input type="checkbox" id="layer-360">
+        <label for="layer-360">Marcadores</label>
+    </div>
+  
+  </div>
+
+
+  <div id="map" class="map"></div>
+
+  <div id="popup" class="ol-popup">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div>
+
+    <!-- <div class="infobloco">
+        <h2>Legenda</h2> 
+            <div><img id="legend"/></div>
+     
+               <div id="info">&nbsp; <i>[Click sobre a camada para mais detalhes]</i></div> 
+</div>   -->
+                  
+
+
+<script>
+
+
+
+const markerDataList = [
+  {% if imagens %}
+     
+      {% for imagem in imagens %}
+      {
+        "coords": [{{ imagem.longitude|unlocalize }},{{ imagem.latitude|unlocalize }}], 
+        "name": "{{ imagem.nome }}", 
+        "icon": "{{ imagem.foto.url }}",
+        "link": "{% url 'imagem360' imagem.id %}"
+      },
+
+      {% endfor %}
+
+  {% else %}
+  
+  {% endif %}
+
+]
+
+
+
+function toggleCollapsible(button) {
+  const icon = button.querySelector('.icon');
+  const content = button.nextElementSibling;
+  if (content.style.display === "block") {
+    content.style.display = "none";
+    icon.textContent = "+";
+  } else {
+    content.style.display = "block";
+    icon.textContent = "-";
+  }
+}
+
+</script>
+
+</body>
+</html>
