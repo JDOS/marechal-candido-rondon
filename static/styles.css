@@ -14,11 +14,11 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 300px;
+      width: 315px;
       height:100%;
       background-color: #ffffffcc; /* branco com transparência */
       border-right: 1px solid #ccc;
-      padding: 16px;
+      padding: 8px;
       padding-top: 60px;
       box-sizing: border-box;
       z-index: 1000;
