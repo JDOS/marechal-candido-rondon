@@ -28,12 +28,16 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost"]
-CSRF_TRUSTED_ORIGINS = ["https://localhost:8000"]
+CSRF_TRUSTED_ORIGINS = ["https://localhost:8000", "http://127.0.0.1:8000"]
 
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -69,6 +73,17 @@ TEMPLATES = [
         },
     },
 ]
+
+# Configurações adicionais necessárias
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+SILENCED_SYSTEM_CHECKS = ['security.W019']
+
+# Configurações opcionais do admin-interface
+ADMIN_INTERFACE = {
+    'SHOW_THEMES': True,
+    'SHOW_RECENT_ACTIONS': True,
+    'SHOW_BOOKMARKS': True,
+}
 
 WSGI_APPLICATION = "setup.wsgi.application"
 
