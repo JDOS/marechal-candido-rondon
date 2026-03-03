@@ -4,9 +4,11 @@
 
     <title>Marechal Candido Rondon - Topografia </title>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@10/dist/ol.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+   
     
 
 </head>
@@ -136,7 +138,10 @@ function toggleCollapsible(button) {
   }
 }
 
+
 </script>
+
+ <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 </body>
 </html>

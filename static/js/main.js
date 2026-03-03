@@ -1,22 +1,30 @@
+// import Map from 'https://cdn.skypack.dev/ol/Map';
+// import View from 'https://cdn.skypack.dev/ol/View';
+// import ImageLayer from 'https://cdn.skypack.dev/ol/layer/Image.js';
+// import TileLayer from 'https://cdn.skypack.dev/ol/layer/Tile.js';
+// import ImageWMS from 'https://cdn.skypack.dev/ol/source/ImageWMS.js';
+// import OSM from 'https://cdn.skypack.dev/ol/source/OSM';
+// import TileWMS from 'https://cdn.skypack.dev/ol/source/TileWMS.js';
+// import VectorSource from 'https://cdn.skypack.dev/ol/source/Vector.js';
+// import Feature from 'https://cdn.skypack.dev/ol/Feature.js';
+// import Point from 'https://cdn.skypack.dev/ol/geom/Point.js';
+// import { fromLonLat } from 'https://cdn.skypack.dev/ol/proj.js';
+// import Style from 'https://cdn.skypack.dev/ol/style/Style.js';
+// import Icon from 'https://cdn.skypack.dev/ol/style/Icon.js';
+// import VectorLayer from 'https://cdn.skypack.dev/ol/layer/Vector.js';
+// import GeoJSON from 'https://cdn.skypack.dev/ol/format/GeoJSON';
+// import Stroke from 'https://cdn.skypack.dev/ol/style/Stroke';
+// import Fill from 'https://cdn.skypack.dev/ol/style/Fill';
+// import Overlay from 'https://cdn.skypack.dev/ol/Overlay';
 
-import Map from 'https://cdn.skypack.dev/ol/Map';
-import View from 'https://cdn.skypack.dev/ol/View';
-import ImageLayer from 'https://cdn.skypack.dev/ol/layer/Image.js';
-import TileLayer from 'https://cdn.skypack.dev/ol/layer/Tile.js';
-import ImageWMS from 'https://cdn.skypack.dev/ol/source/ImageWMS.js';
-import OSM from 'https://cdn.skypack.dev/ol/source/OSM';
-import TileWMS from 'https://cdn.skypack.dev/ol/source/TileWMS.js';
-import VectorSource from 'https://cdn.skypack.dev/ol/source/Vector.js';
-import Feature from 'https://cdn.skypack.dev/ol/Feature.js';
-import Point from 'https://cdn.skypack.dev/ol/geom/Point.js';
-import { fromLonLat } from 'https://cdn.skypack.dev/ol/proj.js';
-import Style from 'https://cdn.skypack.dev/ol/style/Style.js';
-import Icon from 'https://cdn.skypack.dev/ol/style/Icon.js';
-import VectorLayer from 'https://cdn.skypack.dev/ol/layer/Vector.js';
-import GeoJSON from 'https://cdn.skypack.dev/ol/format/GeoJSON';
-import Stroke from 'https://cdn.skypack.dev/ol/style/Stroke';
-import Fill from 'https://cdn.skypack.dev/ol/style/Fill';
-import Overlay from 'https://cdn.skypack.dev/ol/Overlay';
+const { Map, View, Feature, Overlay } = ol;
+const { Tile: TileLayer, Image: ImageLayer, Vector: VectorLayer } = ol.layer;
+const { OSM, ImageWMS, TileWMS, Vector: VectorSource } = ol.source;
+const { Point } = ol.geom;
+const { fromLonLat } = ol.proj;
+const { Style, Icon, Stroke, Fill } = ol.style;
+const { GeoJSON } = ol.format;
+
 
 
 const appData = {
